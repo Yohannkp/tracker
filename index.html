@@ -1,0 +1,140 @@
+<title>Tracker Yohann</title>
+2	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+3	
+4	<style>
+5	/* ─── Design tokens ─────────────────────────────────── */
+6	/* Layout: sticky header + scrollable grid, card-per-habit */
+7	:root {
+8	  --bg: #f7f6f3;
+9	  --surface: #ffffff;
+10	  --surface2: #f0ede8;
+11	  --border: #e2ddd6;
+12	  --fg: #1a1814;
+13	  --fg2: #6b6560;
+14	  --accent: #2d6a4f;
+15	  --accent-lt: #d8ede3;
+16	  --warn: #c85c2d;
+17	  --warn-lt: #fdeee7;
+18	  --gold: #b08d2e;
+19	  --gold-lt: #fdf4dc;
+20	  --check: #2d6a4f;
+21	  --radius: 10px;
+22	  --font-sans: 'DM Sans', system-ui, sans-serif;
+23	  --font-mono: 'DM Mono', monospace;
+24	  color-scheme: light;
+25	}
+26	@media (prefers-color-scheme: dark) {
+27	  :root:not([data-theme="light"]) {
+28	    --bg: #151410;
+29	    --surface: #1e1c18;
+30	    --surface2: #252319;
+31	    --border: #35322b;
+32	    --fg: #f0ede8;
+33	    --fg2: #9c9588;
+34	    --accent: #52b788;
+35	    --accent-lt: #1a3328;
+36	    --warn: #e07b50;
+37	    --warn-lt: #2e1a10;
+38	    --gold: #d4aa50;
+39	    --gold-lt: #2a2210;
+40	    color-scheme: dark;
+41	  }
+42	}
+43	:root[data-theme="dark"] {
+44	  --bg: #151410;
+45	  --surface: #1e1c18;
+46	  --surface2: #252319;
+47	  --border: #35322b;
+48	  --fg: #f0ede8;
+49	  --fg2: #9c9588;
+50	  --accent: #52b788;
+51	  --accent-lt: #1a3328;
+52	  --warn: #e07b50;
+53	  --warn-lt: #2e1a10;
+54	  --gold: #d4aa50;
+55	  --gold-lt: #2a2210;
+56	  color-scheme: dark;
+57	}
+58	
+59	*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+60	
+61	body {
+62	  font-family: var(--font-sans);
+63	  background: var(--bg);
+64	  color: var(--fg);
+65	  min-height: 100%;
+66	  padding-inline: 0;
+67	  padding-block: 0;
+68	}
+69	
+70	/* ─── App shell ─────────────────────────────────────── */
+71	.app { display: flex; flex-direction: column; min-height: 100vh; }
+72	
+73	header {
+74	  position: sticky;
+75	  top: env(safe-area-inset-top, 0px);
+76	  z-index: 100;
+77	  background: var(--surface);
+78	  border-bottom: 1px solid var(--border);
+79	  padding: 12px 20px;
+80	  display: flex;
+81	  align-items: center;
+82	  justify-content: space-between;
+83	  gap: 12px;
+84	}
+85	
+86	.header-left { display: flex; align-items: center; gap: 12px; }
+87	.logo { font-size: 15px; font-weight: 600; letter-spacing: -.2px; }
+88	.logo span { color: var(--accent); }
+89	
+90	.month-nav { display: flex; align-items: center; gap: 8px; }
+91	.month-nav button {
+92	  width: 28px; height: 28px;
+93	  border: 1px solid var(--border);
+94	  border-radius: 6px;
+95	  background: var(--surface2);
+96	  color: var(--fg);
+97	  cursor: pointer;
+98	  font-size: 14px;
+99	  display: flex; align-items: center; justify-content: center;
+100	  transition: background .15s;
+101	}
+102	.month-nav button:hover { background: var(--border); }
+103	#month-label {
+104	  font-size: 13px; font-weight: 600;
+105	  min-width: 110px; text-align: center;
+106	  font-variant-numeric: tabular-nums;
+107	}
+108	
+109	.header-right { display: flex; align-items: center; gap: 8px; }
+110	
+111	.btn-theme {
+112	  width: 32px; height: 32px;
+113	  border: 1px solid var(--border);
+114	  border-radius: 7px;
+115	  background: var(--surface2);
+116	  color: var(--fg2);
+117	  cursor: pointer;
+118	  font-size: 15px;
+119	  display: flex; align-items: center; justify-content: center;
+120	}
+121	
+122	/* ─── Progress bar header ───────────────────────────── */
+123	.progress-bar-wrap {
+124	  padding: 10px 20px 0;
+125	  display: flex; align-items: center; gap: 12px;
+126	}
+127	.progress-track {
+128	  flex: 1;
+129	  height: 6px;
+130	  background: var(--border);
+131	  border-radius: 99px;
+132	  overflow: hidden;
+133	}
+134	.progress-fill {
+135	  height: 100%;
+136	  background: var(--accent);
+137	  border-radius: 99px;
+138	  transition: width .4s ease;
+139	}
+140	.progress
