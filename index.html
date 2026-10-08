@@ -1,584 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Tracker Yohann</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
-
 <style>
-/* ─── Design tokens ─────────────────────────────────── */
-/* Layout: sticky header + scrollable grid, card-per-habit */
 :root {
-  --bg: #f7f6f3;
-  --surface: #ffffff;
-  --surface2: #f0ede8;
-  --border: #e2ddd6;
-  --fg: #1a1814;
-  --fg2: #6b6560;
-  --accent: #2d6a4f;
-  --accent-lt: #d8ede3;
-  --warn: #c85c2d;
-  --warn-lt: #fdeee7;
-  --gold: #b08d2e;
-  --gold-lt: #fdf4dc;
-  --check: #2d6a4f;
-  --radius: 10px;
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-mono: 'DM Mono', monospace;
+  --bg: #f7f6f3; --surface: #ffffff; --surface2: #f0ede8; --border: #e2ddd6;
+  --fg: #1a1814; --fg2: #6b6560; --accent: #2d6a4f; --accent-lt: #d8ede3;
+  --warn: #c85c2d; --warn-lt: #fdeee7; --gold: #b08d2e; --gold-lt: #fdf4dc;
+  --radius: 10px; --font-sans: 'DM Sans', system-ui, sans-serif; --font-mono: 'DM Mono', monospace;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #151410;
-    --surface: #1e1c18;
-    --surface2: #252319;
-    --border: #35322b;
-    --fg: #f0ede8;
-    --fg2: #9c9588;
-    --accent: #52b788;
-    --accent-lt: #1a3328;
-    --warn: #e07b50;
-    --warn-lt: #2e1a10;
-    --gold: #d4aa50;
-    --gold-lt: #2a2210;
-    color-scheme: dark;
-  }
-}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#151410;--surface:#1e1c18;--surface2:#252319;--border:#35322b;
+  --fg:#f0ede8;--fg2:#9c9588;--accent:#52b788;--accent-lt:#1a3328;
+  --warn:#e07b50;--warn-lt:#2e1a10;--gold:#d4aa50;--gold-lt:#2a2210;color-scheme:dark;
+}}
 :root[data-theme="dark"] {
-  --bg: #151410;
-  --surface: #1e1c18;
-  --surface2: #252319;
-  --border: #35322b;
-  --fg: #f0ede8;
-  --fg2: #9c9588;
-  --accent: #52b788;
-  --accent-lt: #1a3328;
-  --warn: #e07b50;
-  --warn-lt: #2e1a10;
-  --gold: #d4aa50;
-  --gold-lt: #2a2210;
-  color-scheme: dark;
+  --bg:#151410;--surface:#1e1c18;--surface2:#252319;--border:#35322b;
+  --fg:#f0ede8;--fg2:#9c9588;--accent:#52b788;--accent-lt:#1a3328;
+  --warn:#e07b50;--warn-lt:#2e1a10;--gold:#d4aa50;--gold-lt:#2a2210;color-scheme:dark;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: var(--font-sans);
-  background: var(--bg);
-  color: var(--fg);
-  min-height: 100%;
-  padding-inline: 0;
-  padding-block: 0;
-}
-
-/* ─── App shell ─────────────────────────────────────── */
-.app { display: flex; flex-direction: column; min-height: 100vh; }
-
-header {
-  position: sticky;
-  top: env(safe-area-inset-top, 0px);
-  z-index: 100;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.header-left { display: flex; align-items: center; gap: 12px; }
-.logo { font-size: 15px; font-weight: 600; letter-spacing: -.2px; }
-.logo span { color: var(--accent); }
-
-.month-nav { display: flex; align-items: center; gap: 8px; }
-.month-nav button {
-  width: 28px; height: 28px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--surface2);
-  color: var(--fg);
-  cursor: pointer;
-  font-size: 14px;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .15s;
-}
-.month-nav button:hover { background: var(--border); }
-#month-label {
-  font-size: 13px; font-weight: 600;
-  min-width: 110px; text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-
-.header-right { display: flex; align-items: center; gap: 8px; }
-
-.btn-theme {
-  width: 32px; height: 32px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--surface2);
-  color: var(--fg2);
-  cursor: pointer;
-  font-size: 15px;
-  display: flex; align-items: center; justify-content: center;
-}
-
-/* ─── Progress bar header ───────────────────────────── */
-.progress-bar-wrap {
-  padding: 10px 20px 0;
-  display: flex; align-items: center; gap: 12px;
-}
-.progress-track {
-  flex: 1;
-  height: 6px;
-  background: var(--border);
-  border-radius: 99px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 99px;
-  transition: width .4s ease;
-}
-.progress-pct {
-  font-size: 12px;
-  font-weight: 600;
-  font-family: var(--font-mono);
-  color: var(--accent);
-  min-width: 36px;
-  text-align: right;
-}
-.progress-stats {
-  font-size: 11px;
-  color: var(--fg2);
-  min-width: 90px;
-}
-
-/* ─── Main grid ─────────────────────────────────────── */
-main {
-  flex: 1;
-  padding: 16px 20px 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-/* ─── Section title ─────────────────────────────────── */
-.section-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--fg2);
-  margin-bottom: 8px;
-}
-
-/* ─── Habit card ────────────────────────────────────── */
-.habit-list { display: flex; flex-direction: column; gap: 8px; }
-
-.habit-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.habit-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  gap: 8px;
-  cursor: pointer;
-  user-select: none;
-}
-.habit-head:hover { background: var(--surface2); }
-
-.habit-name { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 7px; }
-.habit-tag {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  border-radius: 99px;
-}
-.tag-quotidien { background: var(--accent-lt); color: var(--accent); }
-.tag-3x { background: var(--gold-lt); color: var(--gold); }
-.tag-hebdo { background: var(--warn-lt); color: var(--warn); }
-
-.habit-mini-progress {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12px; font-family: var(--font-mono);
-  color: var(--fg2);
-}
-.mini-bar {
-  width: 60px; height: 4px;
-  background: var(--border);
-  border-radius: 99px;
-  overflow: hidden;
-}
-.mini-fill { height: 100%; background: var(--accent); border-radius: 99px; }
-
-.habit-days {
-  padding: 0 14px 12px;
-  overflow-x: auto;
-}
-
-/* Day grid */
-.day-grid {
-  display: flex;
-  gap: 4px;
-  padding-top: 4px;
-}
-.day-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  flex-shrink: 0;
-}
-.day-label {
-  font-size: 9px;
-  font-family: var(--font-mono);
-  color: var(--fg2);
-  line-height: 1;
-}
-.day-check {
-  width: 22px; height: 22px;
-  border: 1.5px solid var(--border);
-  border-radius: 5px;
-  background: var(--surface2);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px;
-  transition: background .1s, border-color .1s;
-  position: relative;
-}
-.day-check.checked {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-.day-check.checked::after {
-  content: '✓';
-  font-weight: 700;
-  font-size: 11px;
-  color: #fff;
-}
-.day-check.na {
-  background: transparent;
-  border-color: transparent;
-  cursor: default;
-  pointer-events: none;
-}
-.day-check.today {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-lt);
-}
-.day-check.today.checked {
-  box-shadow: none;
-}
-
-/* Streak badge */
-.streak-badge {
-  font-size: 11px;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  color: var(--gold);
-  display: flex; align-items: center; gap: 3px;
-}
-
-/* ─── Mood / Motivation ─────────────────────────────── */
-.mood-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.mood-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-}
-.mood-card-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: var(--fg2);
-  margin-bottom: 10px;
-}
-.mood-days {
-  display: flex;
-  gap: 3px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-}
-.mood-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  flex-shrink: 0;
-}
-.mood-dot {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  cursor: pointer;
-  font-size: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  color: transparent;
-  transition: background .1s;
-  position: relative;
-}
-.mood-dot[data-val]::after {
-  content: attr(data-val);
-  color: #fff;
-  font-size: 8px;
-  font-weight: 700;
-}
-.mood-dot.v1 { background: #e05c5c; border-color: #e05c5c; }
-.mood-dot.v2 { background: #e07b50; border-color: #e07b50; }
-.mood-dot.v3 { background: #d4aa50; border-color: #d4aa50; }
-.mood-dot.v4 { background: #7bc47f; border-color: #7bc47f; }
-.mood-dot.v5 { background: #2d6a4f; border-color: #2d6a4f; }
-.mood-label { font-size: 8px; font-family: var(--font-mono); color: var(--fg2); }
-
-.mood-legend {
-  display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;
-}
-.mood-legend-item {
-  display: flex; align-items: center; gap: 3px;
-  font-size: 10px; color: var(--fg2);
-}
-.ml-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-}
-
-/* ─── Weekly Review ─────────────────────────────────── */
-.review-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.review-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.review-week-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--fg2);
-  letter-spacing: .04em;
-}
-.review-textarea {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--fg);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  padding: 7px 9px;
-  resize: none;
-  min-height: 56px;
-  line-height: 1.5;
-  transition: border-color .15s;
-}
-.review-textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-.review-textarea::placeholder { color: var(--fg2); opacity: .6; }
-.review-sublabel {
-  font-size: 10px;
-  color: var(--fg2);
-  font-weight: 500;
-}
-
-/* ─── Dashboard ─────────────────────────────────────── */
-.kpi-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-.kpi-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-}
-.kpi-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--fg2);
-  margin-bottom: 4px;
-}
-.kpi-value {
-  font-size: 22px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-}
-.kpi-value.accent { color: var(--accent); }
-.kpi-value.gold { color: var(--gold); }
-.kpi-sub {
-  font-size: 11px;
-  color: var(--fg2);
-  margin-top: 2px;
-}
-
-/* Habit leaderboard */
-.leaderboard { display: flex; flex-direction: column; gap: 6px; }
-.lb-row {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 9px 13px;
-}
-.lb-rank {
-  font-size: 11px;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  color: var(--fg2);
-  min-width: 18px;
-}
-.lb-name { font-size: 13px; flex: 1; }
-.lb-bar-wrap {
-  width: 80px;
-  height: 5px;
-  background: var(--border);
-  border-radius: 99px;
-  overflow: hidden;
-}
-.lb-bar { height: 100%; background: var(--accent); border-radius: 99px; }
-.lb-pct {
-  font-size: 11px;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  color: var(--accent);
-  min-width: 34px;
-  text-align: right;
-}
-
-/* ─── Tab nav ───────────────────────────────────────── */
-.tab-bar {
-  display: flex;
-  gap: 4px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  padding: 3px;
-  margin-bottom: 4px;
-}
-.tab-btn {
-  flex: 1;
-  padding: 7px 4px;
-  border: none;
-  border-radius: 7px;
-  background: transparent;
-  color: var(--fg2);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background .15s, color .15s;
-  white-space: nowrap;
-}
-.tab-btn.active {
-  background: var(--surface);
-  color: var(--fg);
-  box-shadow: 0 1px 3px rgba(0,0,0,.08);
-}
-.tab-pane { display: none; }
-.tab-pane.active { display: block; }
-
-/* ─── Ressources ────────────────────────────────────── */
-.res-sections { display: flex; flex-direction: column; gap: 16px; }
-.res-group {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.res-group-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  color: var(--fg2);
-  padding: 10px 14px 6px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 6px;
-}
-.res-list { display: flex; flex-direction: column; }
-.res-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  text-decoration: none;
-  color: var(--fg);
-  border-bottom: 1px solid var(--border);
-  transition: background .12s;
-  gap: 8px;
-}
-.res-link:last-child { border-bottom: none; }
-.res-link:hover { background: var(--surface2); }
-.res-link-left { display: flex; flex-direction: column; gap: 2px; }
-.res-link-name { font-size: 13px; font-weight: 500; }
-.res-link-desc { font-size: 11px; color: var(--fg2); }
-.res-link-arrow { font-size: 14px; color: var(--fg2); flex-shrink: 0; }
-.res-tip {
-  font-size: 11px;
-  color: var(--fg2);
-  padding: 8px 14px;
-  background: var(--accent-lt);
-  border-top: 1px solid var(--border);
-  line-height: 1.5;
-}
-
-/* ─── Responsive ────────────────────────────────────── */
-@media (max-width: 520px) {
-  .kpi-row { grid-template-columns: 1fr 1fr; }
-  .review-grid { grid-template-columns: 1fr; }
-  .mood-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 360px) {
-  .kpi-row { grid-template-columns: 1fr; }
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--fg);min-height:100%}
+.app{display:flex;flex-direction:column;min-height:100vh}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:100;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo{font-size:15px;font-weight:600;letter-spacing:-.2px}
+.logo span{color:var(--accent)}
+.month-nav{display:flex;align-items:center;gap:8px}
+.month-nav button{width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--fg);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.month-nav button:hover{background:var(--border)}
+#month-label{font-size:13px;font-weight:600;min-width:110px;text-align:center;font-variant-numeric:tabular-nums}
+.header-right{display:flex;align-items:center;gap:8px}
+.btn-theme{width:32px;height:32px;border:1px solid var(--border);border-radius:7px;background:var(--surface2);color:var(--fg2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.progress-bar-wrap{padding:10px 20px 0;display:flex;align-items:center;gap:12px}
+.progress-track{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .4s ease}
+.progress-pct{font-size:12px;font-weight:600;font-family:var(--font-mono);color:var(--accent);min-width:36px;text-align:right}
+.progress-stats{font-size:11px;color:var(--fg2);min-width:90px}
+main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
+.section-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fg2);margin-bottom:8px}
+.habit-list{display:flex;flex-direction:column;gap:8px}
+.habit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.habit-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:8px;cursor:pointer;user-select:none}
+.habit-head:hover{background:var(--surface2)}
+.habit-name{font-size:14px;font-weight:500;display:flex;align-items:center;gap:7px}
+.habit-tag{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:99px}
+.tag-quotidien{background:var(--accent-lt);color:var(--accent)}
+.tag-3x{background:var(--gold-lt);color:var(--gold)}
+.tag-hebdo{background:var(--warn-lt);color:var(--warn)}
+.habit-mini-progress{display:flex;align-items:center;gap:8px;font-size:12px;font-family:var(--font-mono);color:var(--fg2)}
+.mini-bar{width:60px;height:4px;background:var(--border);border-radius:99px;overflow:hidden}
+.mini-fill{height:100%;background:var(--accent);border-radius:99px}
+.habit-days{padding:0 14px 12px;overflow-x:auto}
+.day-grid{display:flex;gap:4px;padding-top:4px}
+.day-cell{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.day-label{font-size:9px;font-family:var(--font-mono);color:var(--fg2);line-height:1}
+.day-check{width:22px;height:22px;border:1.5px solid var(--border);border-radius:5px;background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:background .1s,border-color .1s;position:relative}
+.day-check.checked{background:var(--accent);border-color:var(--accent);color:#fff}
+.day-check.checked::after{content:'✓';font-weight:700;font-size:11px;color:#fff}
+.day-check.na{background:transparent;border-color:transparent;cursor:default;pointer-events:none}
+.day-check.today{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-lt)}
+.day-check.today.checked{box-shadow:none}
+.streak-badge{font-size:11px;font-family:var(--font-mono);font-weight:600;color:var(--gold);display:flex;align-items:center;gap:3px}
+.mood-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mood-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.mood-card-title{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--fg2);margin-bottom:10px}
+.mood-days{display:flex;gap:3px;overflow-x:auto;padding-bottom:2px}
+.mood-cell{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.mood-dot{width:20px;height:20px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);cursor:pointer;font-size:9px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:600;color:transparent;transition:background .1s;position:relative}
+.mood-dot[data-val]::after{content:attr(data-val);color:#fff;font-size:8px;font-weight:700}
+.mood-dot.v1{background:#e05c5c;border-color:#e05c5c}
+.mood-dot.v2{background:#e07b50;border-color:#e07b50}
+.mood-dot.v3{background:#d4aa50;border-color:#d4aa50}
+.mood-dot.v4{background:#7bc47f;border-color:#7bc47f}
+.mood-dot.v5{background:#2d6a4f;border-color:#2d6a4f}
+.mood-label{font-size:8px;font-family:var(--font-mono);color:var(--fg2)}
+.mood-legend{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.mood-legend-item{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--fg2)}
+.ml-dot{width:8px;height:8px;border-radius:50%}
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.review-week-label{font-size:11px;font-weight:600;color:var(--fg2);letter-spacing:.04em}
+.review-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--fg);font-family:var(--font-sans);font-size:12px;padding:7px 9px;resize:none;min-height:56px;line-height:1.5;transition:border-color .15s}
+.review-textarea:focus{outline:none;border-color:var(--accent)}
+.review-textarea::placeholder{color:var(--fg2);opacity:.6}
+.review-sublabel{font-size:10px;color:var(--fg2);font-weight:500}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.kpi-label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg2);margin-bottom:4px}
+.kpi-value{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi-value.accent{color:var(--accent)}
+.kpi-value.gold{color:var(--gold)}
+.kpi-sub{font-size:11px;color:var(--fg2);margin-top:2px}
+.leaderboard{display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 13px}
+.lb-rank{font-size:11px;font-family:var(--font-mono);font-weight:700;color:var(--fg2);min-width:18px}
+.lb-name{font-size:13px;flex:1}
+.lb-bar-wrap{width:80px;height:5px;background:var(--border);border-radius:99px;overflow:hidden}
+.lb-bar{height:100%;background:var(--accent);border-radius:99px}
+.lb-pct{font-size:11px;font-family:var(--font-mono);font-weight:600;color:var(--accent);min-width:34px;text-align:right}
+.tab-bar{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:4px}
+.tab-btn{flex:1;padding:7px 4px;border:none;border-radius:7px;background:transparent;color:var(--fg2);font-family:var(--font-sans);font-size:12px;font-weight:500;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+.tab-btn.active{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.res-sections{display:flex;flex-direction:column;gap:16px}
+.res-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.res-group-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fg2);padding:10px 14px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.res-list{display:flex;flex-direction:column}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;text-decoration:none;color:var(--fg);border-bottom:1px solid var(--border);transition:background .12s;gap:8px}
+.res-link:last-child{border-bottom:none}
+.res-link:hover{background:var(--surface2)}
+.res-link-left{display:flex;flex-direction:column;gap:2px}
+.res-link-name{font-size:13px;font-weight:500}
+.res-link-desc{font-size:11px;color:var(--fg2)}
+.res-link-arrow{font-size:14px;color:var(--fg2);flex-shrink:0}
+.res-tip{font-size:11px;color:var(--fg2);padding:8px 14px;background:var(--accent-lt);border-top:1px solid var(--border);line-height:1.5}
+@media(max-width:520px){.kpi-row{grid-template-columns:1fr 1fr}.review-grid{grid-template-columns:1fr}.mood-grid{grid-template-columns:1fr}}
+@media(max-width:360px){.kpi-row{grid-template-columns:1fr}}
 </style>
-
+</head>
+<body>
 <div class="app">
   <header>
-    <div class="header-left">
-      <span class="logo">Tracker <span>Yohann</span></span>
-    </div>
+    <div class="header-left"><span class="logo">Tracker <span>Yohann</span></span></div>
     <div class="month-nav">
-      <button id="prev-month" aria-label="Mois précédent">‹</button>
+      <button id="prev-month">‹</button>
       <span id="month-label"></span>
-      <button id="next-month" aria-label="Mois suivant">›</button>
+      <button id="next-month">›</button>
     </div>
-    <div class="header-right">
-      <button class="btn-theme" id="theme-toggle" title="Changer le thème">☀</button>
-    </div>
+    <div class="header-right"><button class="btn-theme" id="theme-toggle">☀</button></div>
   </header>
-
   <div class="progress-bar-wrap">
     <div class="progress-track"><div class="progress-fill" id="global-fill" style="width:0%"></div></div>
     <span class="progress-pct" id="global-pct">0%</span>
-    <span class="progress-stats" id="global-stats">0 / 0 habitudes</span>
+    <span class="progress-stats" id="global-stats">0 / 0</span>
   </div>
-
   <main>
     <div class="tab-bar">
       <button class="tab-btn active" data-tab="habits">Habitudes</button>
@@ -587,14 +148,10 @@ main {
       <button class="tab-btn" data-tab="stats">Stats</button>
       <button class="tab-btn" data-tab="ressources">Liens</button>
     </div>
-
-    <!-- TAB: HABITUDES -->
     <div class="tab-pane active" id="tab-habits">
       <p class="section-title">Ce mois-ci</p>
       <div class="habit-list" id="habit-list"></div>
     </div>
-
-    <!-- TAB: HUMEUR -->
     <div class="tab-pane" id="tab-mood">
       <p class="section-title">Humeur & Motivation</p>
       <div class="mood-grid">
@@ -606,467 +163,242 @@ main {
         <div class="mood-card">
           <div class="mood-card-title">Motivation 🔥</div>
           <div class="mood-days" id="motiv-days"></div>
-          <div class="mood-legend"></div>
         </div>
       </div>
     </div>
-
-    <!-- TAB: WEEKLY REVIEW -->
     <div class="tab-pane" id="tab-review">
       <p class="section-title">Bilan hebdomadaire</p>
       <div class="review-grid" id="review-grid"></div>
     </div>
-
-    <!-- TAB: RESSOURCES -->
     <div class="tab-pane" id="tab-ressources">
       <p class="section-title">Ressources Tech & IA</p>
       <div class="res-sections" id="res-sections"></div>
     </div>
-
-    <!-- TAB: STATS -->
     <div class="tab-pane" id="tab-stats">
       <p class="section-title">Vue d'ensemble</p>
       <div class="kpi-row">
-        <div class="kpi-card">
-          <div class="kpi-label">Complétées</div>
-          <div class="kpi-value accent" id="kpi-done">0</div>
-          <div class="kpi-sub">cases cochées</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Taux global</div>
-          <div class="kpi-value accent" id="kpi-rate">0%</div>
-          <div class="kpi-sub">du mois</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Meilleure série</div>
-          <div class="kpi-value gold" id="kpi-streak">0 🔥</div>
-          <div class="kpi-sub">jours consécutifs</div>
-        </div>
+        <div class="kpi-card"><div class="kpi-label">Complétées</div><div class="kpi-value accent" id="kpi-done">0</div><div class="kpi-sub">cases cochées</div></div>
+        <div class="kpi-card"><div class="kpi-label">Taux global</div><div class="kpi-value accent" id="kpi-rate">0%</div><div class="kpi-sub">du mois</div></div>
+        <div class="kpi-card"><div class="kpi-label">Meilleure série</div><div class="kpi-value gold" id="kpi-streak">0 🔥</div><div class="kpi-sub">jours consécutifs</div></div>
       </div>
       <p class="section-title" style="margin-top:16px">Classement habitudes</p>
       <div class="leaderboard" id="leaderboard"></div>
     </div>
   </main>
 </div>
-
 <script>
-// ── Config habitudes ────────────────────────────────────
-const HABITS = [
-  { id:'gym',    name:'Gym 💪',                    tag:'3x',        freq:'alt' },
-  { id:'sortie', name:'Sortie / Activité 🚴',       tag:'hebdo',     freq:'weekly' },
-  { id:'veille', name:'Veille IA 🤖',               tag:'quotidien', freq:'daily' },
-  { id:'wikien', name:'Wikipedia EN 🌍',             tag:'quotidien', freq:'daily' },
-  { id:'learn',  name:'Apprendre un truc 💡',        tag:'quotidien', freq:'daily' },
-  { id:'article',name:'1 grand article de fond 📰',  tag:'quotidien', freq:'daily' },
-  { id:'revise', name:'Réviser 1h 📚',               tag:'quotidien', freq:'daily' },
+const HABITS=[
+  {id:'gym',name:'Gym 💪',tag:'3x',freq:'alt'},
+  {id:'sortie',name:'Sortie / Activité 🚴',tag:'hebdo',freq:'weekly'},
+  {id:'veille',name:'Veille IA 🤖',tag:'quotidien',freq:'daily'},
+  {id:'wikien',name:'Wikipedia EN 🌍',tag:'quotidien',freq:'daily'},
+  {id:'learn',name:'Apprendre un truc 💡',tag:'quotidien',freq:'daily'},
+  {id:'article',name:'1 grand article de fond 📰',tag:'quotidien',freq:'daily'},
+  {id:'revise',name:'Réviser 1h 📚',tag:'quotidien',freq:'daily'},
 ];
-
-// ── State ───────────────────────────────────────────────
-let currentYear, currentMonth;
-
-function today() {
-  const d = new Date();
-  return { y: d.getFullYear(), m: d.getMonth(), d: d.getDate() };
-}
-
-function storeKey(y, m) { return `tracker_${y}_${m}`; }
-
-function loadState(y, m) {
-  try {
-    const raw = localStorage.getItem(storeKey(y, m));
-    return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
-}
-function saveState(y, m, state) {
-  try { localStorage.setItem(storeKey(y, m), JSON.stringify(state)); } catch {}
-}
-
-// ── Helpers ─────────────────────────────────────────────
-const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin',
-  'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-const DAYS_SHORT = ['L','M','M','J','V','S','D'];
-
-function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
-
-function isDayActive(habitFreq, dayOfWeek) {
-  // dayOfWeek: 0=Sun,1=Mon,...
-  if (habitFreq === 'daily') return true;
-  if (habitFreq === 'alt') {
-    // Mon Wed Fri = 1,3,5
-    return [1,3,5].includes(dayOfWeek);
-  }
-  if (habitFreq === 'weekly') {
-    // Sunday = 0
-    return dayOfWeek === 0;
-  }
+const RESOURCES=[
+  {title:'🌍 Wikipedia EN — Culture Tech',tip:"Méthode : lis d'abord en FR pour le contexte, puis bascule en EN. Résume en 3 points.",links:[
+    {name:'Artificial intelligence',desc:"Vue d'ensemble de l'IA",url:'https://en.wikipedia.org/wiki/Artificial_intelligence'},
+    {name:'Machine learning',desc:'Fondamentaux du ML',url:'https://en.wikipedia.org/wiki/Machine_learning'},
+    {name:'Large language model',desc:'Comment fonctionnent les LLMs',url:'https://en.wikipedia.org/wiki/Large_language_model'},
+    {name:'Transformer (deep learning)',desc:'Architecture des transformers',url:'https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)'},
+    {name:'Simple English Wikipedia',desc:'Phrases courtes — idéal pour débuter',url:'https://simple.wikipedia.org/wiki/Main_Page'},
+  ]},
+  {title:'📄 Papers & Research',tip:"Lis le abstract + conclusion d'abord.",links:[
+    {name:'Papers With Code',desc:'Papers ML + code open source',url:'https://paperswithcode.com'},
+    {name:'Distill.pub',desc:'ML expliqué visuellement',url:'https://distill.pub'},
+    {name:'Hugging Face Blog',desc:'Nouveautés IA par les praticiens',url:'https://huggingface.co/blog'},
+    {name:'arXiv CS.AI',desc:'Les derniers papers en IA',url:'https://arxiv.org/list/cs.AI/recent'},
+  ]},
+  {title:'📰 Veille quotidienne',tip:'TLDR AI = 5 min/jour max.',links:[
+    {name:'TLDR AI',desc:'Newsletter IA — 5 min par jour',url:'https://tldr.tech/ai'},
+    {name:'Hacker News',desc:'Actualité tech commentée par des ingénieurs',url:'https://news.ycombinator.com'},
+    {name:'The Verge — AI',desc:'Tech grand public + IA',url:'https://www.theverge.com/ai-artificial-intelligence'},
+    {name:'MIT Tech Review',desc:'Analyses profondes sur la tech',url:'https://www.technologyreview.com'},
+  ]},
+  {title:'🎓 Apprendre & progresser',tip:'Complète avec Andrej Karpathy sur YouTube.',links:[
+    {name:'fast.ai',desc:'Deep learning pratique, gratuit',url:'https://www.fast.ai'},
+    {name:'CS50 AI (Harvard)',desc:"Introduction à l'IA par Harvard",url:'https://cs50.harvard.edu/ai/'},
+    {name:'Roadmap.sh — AI & Data',desc:'Roadmap pour devenir AI Engineer',url:'https://roadmap.sh/ai-data-scientist'},
+    {name:'Kaggle Learn',desc:'Notebooks pratiques ML/Data',url:'https://www.kaggle.com/learn'},
+  ]},
+];
+let currentYear,currentMonth;
+function today(){const d=new Date();return{y:d.getFullYear(),m:d.getMonth(),d:d.getDate()}}
+function storeKey(y,m){return`tracker_${y}_${m}`}
+function loadState(y,m){try{const r=localStorage.getItem(storeKey(y,m));return r?JSON.parse(r):{}}catch{return{}}}
+function saveState(y,m,s){try{localStorage.setItem(storeKey(y,m),JSON.stringify(s))}catch{}}
+const MONTHS_FR=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+function daysInMonth(y,m){return new Date(y,m+1,0).getDate()}
+function isDayActive(freq,dow){
+  if(freq==='daily')return true;
+  if(freq==='alt')return[1,3,5].includes(dow);
+  if(freq==='weekly')return dow===0;
   return true;
 }
-
-// ── Rendering ───────────────────────────────────────────
-function renderAll() {
-  const y = currentYear, m = currentMonth;
-  const state = loadState(y, m);
-  const t = today();
-  const days = daysInMonth(y, m);
-
-  document.getElementById('month-label').textContent =
-    MONTHS_FR[m] + ' ' + y;
-
-  renderHabits(y, m, state, t, days);
-  renderMood(y, m, state, t, days);
-  renderReview(y, m, state);
-  renderStats(y, m, state, days);
-  renderProgress(y, m, state, days);
+function renderAll(){
+  const y=currentYear,m=currentMonth,state=loadState(y,m),t=today(),days=daysInMonth(y,m);
+  document.getElementById('month-label').textContent=MONTHS_FR[m]+' '+y;
+  renderHabits(y,m,state,t,days);
+  renderMood(y,m,state,t,days);
+  renderReview(y,m,state);
+  renderStats(y,m,state,days);
+  renderProgress(y,m,state,days);
 }
-
-function renderProgress(y, m, state, days) {
-  const t = today();
-  let total = 0, done = 0;
-  for (let d = 1; d <= days; d++) {
-    if (y > t.y || (y === t.y && m > t.m)) break;
-    if (y === t.y && m === t.m && d > t.d) break;
-    const dow = new Date(y, m, d).getDay();
-    HABITS.forEach(h => {
-      if (isDayActive(h.freq, dow)) {
-        total++;
-        if (state[h.id]?.[d]) done++;
-      }
-    });
+function renderProgress(y,m,state,days){
+  const t=today();let total=0,done=0;
+  for(let d=1;d<=days;d++){
+    if(y>t.y||(y===t.y&&m>t.m))break;
+    if(y===t.y&&m===t.m&&d>t.d)break;
+    const dow=new Date(y,m,d).getDay();
+    HABITS.forEach(h=>{if(isDayActive(h.freq,dow)){total++;if(state[h.id]?.[d])done++;}});
   }
-  const pct = total > 0 ? Math.round(done / total * 100) : 0;
-  document.getElementById('global-fill').style.width = pct + '%';
-  document.getElementById('global-pct').textContent = pct + '%';
-  document.getElementById('global-stats').textContent = done + ' / ' + total;
+  const pct=total>0?Math.round(done/total*100):0;
+  document.getElementById('global-fill').style.width=pct+'%';
+  document.getElementById('global-pct').textContent=pct+'%';
+  document.getElementById('global-stats').textContent=done+' / '+total;
 }
-
-function renderHabits(y, m, state, t, days) {
-  const list = document.getElementById('habit-list');
-  list.innerHTML = '';
-
-  HABITS.forEach(h => {
-    // count
-    let target = 0, done = 0, streak = 0, currentStreak = 0;
-    for (let d = 1; d <= days; d++) {
-      const dow = new Date(y, m, d).getDay();
-      if (!isDayActive(h.freq, dow)) continue;
+function renderHabits(y,m,state,t,days){
+  const list=document.getElementById('habit-list');list.innerHTML='';
+  HABITS.forEach(h=>{
+    let target=0,done=0,streak=0,cur=0;
+    for(let d=1;d<=days;d++){
+      const dow=new Date(y,m,d).getDay();
+      if(!isDayActive(h.freq,dow))continue;
       target++;
-      if (state[h.id]?.[d]) {
-        done++;
-        currentStreak++;
-        streak = Math.max(streak, currentStreak);
-      } else {
-        currentStreak = 0;
-      }
+      if(state[h.id]?.[d]){done++;cur++;streak=Math.max(streak,cur);}else cur=0;
     }
-    const pct = target > 0 ? Math.round(done / target * 100) : 0;
-
-    const card = document.createElement('div');
-    card.className = 'habit-card';
-
-    // head
-    const head = document.createElement('div');
-    head.className = 'habit-head';
-    head.innerHTML = `
-      <span class="habit-name">
-        ${h.name}
-        <span class="habit-tag tag-${h.tag}">${h.tag === '3x' ? '3×/sem' : h.tag === 'hebdo' ? 'hebdo' : 'quotidien'}</span>
-      </span>
-      <span class="habit-mini-progress">
-        ${streak > 0 ? `<span class="streak-badge">🔥 ${streak}</span>` : ''}
-        <span>${done}/${target}</span>
-        <div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div>
-        <span style="font-size:11px;font-weight:600;color:var(--accent)">${pct}%</span>
-      </span>`;
+    const pct=target>0?Math.round(done/target*100):0;
+    const card=document.createElement('div');card.className='habit-card';
+    const head=document.createElement('div');head.className='habit-head';
+    head.innerHTML=`<span class="habit-name">${h.name}<span class="habit-tag tag-${h.tag}">${h.tag==='3x'?'3×/sem':h.tag==='hebdo'?'hebdo':'quotidien'}</span></span>
+      <span class="habit-mini-progress">${streak>0?`<span class="streak-badge">🔥 ${streak}</span>`:''}<span>${done}/${target}</span><div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div><span style="font-size:11px;font-weight:600;color:var(--accent)">${pct}%</span></span>`;
     card.appendChild(head);
-
-    // days row
-    const daysDiv = document.createElement('div');
-    daysDiv.className = 'habit-days';
-    const grid = document.createElement('div');
-    grid.className = 'day-grid';
-
-    for (let d = 1; d <= days; d++) {
-      const dow = new Date(y, m, d).getDay();
-      const active = isDayActive(h.freq, dow);
-      const isToday = (y === t.y && m === t.m && d === t.d);
-      const isFuture = (y > t.y || (y === t.y && m > t.m) || (y === t.y && m === t.m && d > t.d));
-      const checked = !!state[h.id]?.[d];
-
-      const cell = document.createElement('div');
-      cell.className = 'day-cell';
-
-      const lbl = document.createElement('div');
-      lbl.className = 'day-label';
-      lbl.textContent = d;
-
-      const box = document.createElement('div');
-      box.className = 'day-check';
-      if (!active) box.classList.add('na');
-      else {
-        if (checked) box.classList.add('checked');
-        if (isToday) box.classList.add('today');
-        if (!isFuture && active) {
-          box.addEventListener('click', () => {
-            const s = loadState(y, m);
-            if (!s[h.id]) s[h.id] = {};
-            s[h.id][d] = !s[h.id][d];
-            saveState(y, m, s);
-            renderAll();
-          });
-        }
+    const daysDiv=document.createElement('div');daysDiv.className='habit-days';
+    const grid=document.createElement('div');grid.className='day-grid';
+    for(let d=1;d<=days;d++){
+      const dow=new Date(y,m,d).getDay();
+      const active=isDayActive(h.freq,dow);
+      const isToday=(y===t.y&&m===t.m&&d===t.d);
+      const isFuture=(y>t.y||(y===t.y&&m>t.m)||(y===t.y&&m===t.m&&d>t.d));
+      const checked=!!state[h.id]?.[d];
+      const cell=document.createElement('div');cell.className='day-cell';
+      const lbl=document.createElement('div');lbl.className='day-label';lbl.textContent=d;
+      const box=document.createElement('div');box.className='day-check';
+      if(!active)box.classList.add('na');
+      else{
+        if(checked)box.classList.add('checked');
+        if(isToday)box.classList.add('today');
+        if(!isFuture)box.addEventListener('click',()=>{
+          const s=loadState(y,m);if(!s[h.id])s[h.id]={};
+          s[h.id][d]=!s[h.id][d];saveState(y,m,s);renderAll();
+        });
       }
-
-      cell.appendChild(lbl);
-      cell.appendChild(box);
-      grid.appendChild(cell);
+      cell.appendChild(lbl);cell.appendChild(box);grid.appendChild(cell);
     }
-
-    // toggle expand
-    let expanded = true;
-    const daysWrap = document.createElement('div');
-    daysWrap.appendChild(grid);
-    daysDiv.appendChild(daysWrap);
-    card.appendChild(daysDiv);
-
-    head.addEventListener('click', (e) => {
-      if (e.target.closest('.day-check')) return;
-      expanded = !expanded;
-      daysDiv.style.display = expanded ? '' : 'none';
-    });
-
+    let expanded=true;
+    daysDiv.appendChild(grid);card.appendChild(daysDiv);
+    head.addEventListener('click',(e)=>{if(e.target.closest('.day-check'))return;expanded=!expanded;daysDiv.style.display=expanded?'':'none';});
     list.appendChild(card);
   });
 }
-
-function renderMood(y, m, state, t, days) {
-  ['mood', 'motiv'].forEach(type => {
-    const container = document.getElementById(type === 'mood' ? 'mood-days' : 'motiv-days');
-    container.innerHTML = '';
-    for (let d = 1; d <= days; d++) {
-      const isFuture = (y > t.y || (y === t.y && m > t.m) || (y === t.y && m === t.m && d > t.d));
-      const val = state[type]?.[d] || 0;
-      const cell = document.createElement('div');
-      cell.className = 'mood-cell';
-      const dot = document.createElement('div');
-      dot.className = 'mood-dot' + (val ? ' v' + val : '');
-      if (val) dot.setAttribute('data-val', val);
-      const lbl = document.createElement('div');
-      lbl.className = 'mood-label';
-      lbl.textContent = d;
-      cell.appendChild(dot);
-      cell.appendChild(lbl);
-      container.appendChild(cell);
-
-      if (!isFuture) {
-        dot.style.cursor = 'pointer';
-        dot.addEventListener('click', () => {
-          const s = loadState(y, m);
-          if (!s[type]) s[type] = {};
-          s[type][d] = ((s[type][d] || 0) % 5) + 1;
-          saveState(y, m, s);
-          renderMood(y, m, loadState(y, m), t, days);
-        });
-      }
+function renderMood(y,m,state,t,days){
+  ['mood','motiv'].forEach(type=>{
+    const container=document.getElementById(type==='mood'?'mood-days':'motiv-days');
+    container.innerHTML='';
+    for(let d=1;d<=days;d++){
+      const isFuture=(y>t.y||(y===t.y&&m>t.m)||(y===t.y&&m===t.m&&d>t.d));
+      const val=state[type]?.[d]||0;
+      const cell=document.createElement('div');cell.className='mood-cell';
+      const dot=document.createElement('div');dot.className='mood-dot'+(val?' v'+val:'');
+      if(val)dot.setAttribute('data-val',val);
+      const lbl=document.createElement('div');lbl.className='mood-label';lbl.textContent=d;
+      cell.appendChild(dot);cell.appendChild(lbl);container.appendChild(cell);
+      if(!isFuture){dot.style.cursor='pointer';dot.addEventListener('click',()=>{
+        const s=loadState(y,m);if(!s[type])s[type]={};
+        s[type][d]=((s[type][d]||0)%5)+1;saveState(y,m,s);renderMood(y,m,loadState(y,m),t,days);
+      });}
     }
   });
-
-  // Legend
-  const legend = document.getElementById('mood-legend');
-  if (legend) {
-    const colors = ['#e05c5c','#e07b50','#d4aa50','#7bc47f','#2d6a4f'];
-    const labels = ['😞','😕','😐','🙂','😄'];
-    legend.innerHTML = colors.map((c,i) =>
-      `<span class="mood-legend-item"><span class="ml-dot" style="background:${c}"></span>${labels[i]}</span>`
-    ).join('');
+  const legend=document.getElementById('mood-legend');
+  if(legend){
+    const colors=['#e05c5c','#e07b50','#d4aa50','#7bc47f','#2d6a4f'];
+    const labels=['😞','😕','😐','🙂','😄'];
+    legend.innerHTML=colors.map((c,i)=>`<span class="mood-legend-item"><span class="ml-dot" style="background:${c}"></span>${labels[i]}</span>`).join('');
   }
 }
-
-function renderReview(y, m, state) {
-  const grid = document.getElementById('review-grid');
-  grid.innerHTML = '';
-  for (let w = 1; w <= 4; w++) {
-    const card = document.createElement('div');
-    card.className = 'review-card';
-    card.innerHTML = `<div class="review-week-label">Semaine ${w}</div>
+function renderReview(y,m,state){
+  const grid=document.getElementById('review-grid');grid.innerHTML='';
+  for(let w=1;w<=4;w++){
+    const card=document.createElement('div');card.className='review-card';
+    card.innerHTML=`<div class="review-week-label">Semaine ${w}</div>
       <div class="review-sublabel">🏆 Victoire</div>
       <textarea class="review-textarea" placeholder="Ta victoire cette semaine…" data-key="w${w}_win" rows="2"></textarea>
-      <div class="review-sublabel">⚡ Friction / ajustement</div>
+      <div class="review-sublabel">⚡ Friction</div>
       <textarea class="review-textarea" placeholder="Ce qui a bloqué…" data-key="w${w}_fix" rows="2"></textarea>`;
     grid.appendChild(card);
-    card.querySelectorAll('textarea').forEach(ta => {
-      const key = ta.dataset.key;
-      ta.value = state.review?.[key] || '';
-      ta.addEventListener('input', () => {
-        const s = loadState(y, m);
-        if (!s.review) s.review = {};
-        s.review[key] = ta.value;
-        saveState(y, m, s);
-      });
+    card.querySelectorAll('textarea').forEach(ta=>{
+      const key=ta.dataset.key;ta.value=state.review?.[key]||'';
+      ta.addEventListener('input',()=>{const s=loadState(y,m);if(!s.review)s.review={};s.review[key]=ta.value;saveState(y,m,s);});
     });
   }
 }
-
-function renderStats(y, m, state, days) {
-  const t = today();
-  let total = 0, done = 0, bestStreak = 0;
-  const habitStats = HABITS.map(h => {
-    let hTarget = 0, hDone = 0, streak = 0, cur = 0;
-    for (let d = 1; d <= days; d++) {
-      const dow = new Date(y, m, d).getDay();
-      if (!isDayActive(h.freq, dow)) continue;
-      hTarget++;
-      if (state[h.id]?.[d]) {
-        hDone++;
-        cur++;
-        streak = Math.max(streak, cur);
-      } else cur = 0;
+function renderStats(y,m,state,days){
+  let total=0,done=0,bestStreak=0;
+  const habitStats=HABITS.map(h=>{
+    let hTarget=0,hDone=0,streak=0,cur=0;
+    for(let d=1;d<=days;d++){
+      const dow=new Date(y,m,d).getDay();
+      if(!isDayActive(h.freq,dow))continue;
+      hTarget++;if(state[h.id]?.[d]){hDone++;cur++;streak=Math.max(streak,cur);}else cur=0;
     }
-    total += hTarget;
-    done += hDone;
-    bestStreak = Math.max(bestStreak, streak);
-    return { ...h, target: hTarget, done: hDone, streak,
-      pct: hTarget > 0 ? Math.round(hDone / hTarget * 100) : 0 };
+    total+=hTarget;done+=hDone;bestStreak=Math.max(bestStreak,streak);
+    return{...h,target:hTarget,done:hDone,streak,pct:hTarget>0?Math.round(hDone/hTarget*100):0};
   });
-
-  const rate = total > 0 ? Math.round(done / total * 100) : 0;
-  document.getElementById('kpi-done').textContent = done;
-  document.getElementById('kpi-rate').textContent = rate + '%';
-  document.getElementById('kpi-streak').textContent = bestStreak + ' 🔥';
-
-  const lb = document.getElementById('leaderboard');
-  lb.innerHTML = '';
-  habitStats.sort((a,b) => b.pct - a.pct).forEach((h, i) => {
-    const row = document.createElement('div');
-    row.className = 'lb-row';
-    row.innerHTML = `<span class="lb-rank">#${i+1}</span>
-      <span class="lb-name">${h.name}</span>
-      <div class="lb-bar-wrap"><div class="lb-bar" style="width:${h.pct}%"></div></div>
-      <span class="lb-pct">${h.pct}%</span>`;
+  const rate=total>0?Math.round(done/total*100):0;
+  document.getElementById('kpi-done').textContent=done;
+  document.getElementById('kpi-rate').textContent=rate+'%';
+  document.getElementById('kpi-streak').textContent=bestStreak+' 🔥';
+  const lb=document.getElementById('leaderboard');lb.innerHTML='';
+  habitStats.sort((a,b)=>b.pct-a.pct).forEach((h,i)=>{
+    const row=document.createElement('div');row.className='lb-row';
+    row.innerHTML=`<span class="lb-rank">#${i+1}</span><span class="lb-name">${h.name}</span><div class="lb-bar-wrap"><div class="lb-bar" style="width:${h.pct}%"></div></div><span class="lb-pct">${h.pct}%</span>`;
     lb.appendChild(row);
   });
 }
-
-// ── Ressources ──────────────────────────────────────────
-const RESOURCES = [
-  {
-    title: '🌍 Wikipedia EN — Culture Tech',
-    tip: 'Méthode : lis d\'abord en FR pour le contexte, puis bascule en EN pour l\'immersion linguistique. Résume en 3 points.',
-    links: [
-      { name: 'Artificial intelligence', desc: 'Vue d\'ensemble de l\'IA', url: 'https://en.wikipedia.org/wiki/Artificial_intelligence' },
-      { name: 'Machine learning', desc: 'Fondamentaux du ML', url: 'https://en.wikipedia.org/wiki/Machine_learning' },
-      { name: 'Large language model', desc: 'Comment fonctionnent les LLMs', url: 'https://en.wikipedia.org/wiki/Large_language_model' },
-      { name: 'Transformer (deep learning)', desc: 'Architecture des transformers', url: 'https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)' },
-      { name: 'Graphics processing unit', desc: 'GPU & IA, géopolitique des puces', url: 'https://en.wikipedia.org/wiki/Graphics_processing_unit' },
-      { name: 'Simple English Wikipedia', desc: 'Phrases courtes — idéal pour débuter', url: 'https://simple.wikipedia.org/wiki/Main_Page' },
-    ]
-  },
-  {
-    title: '📄 Papers & Research',
-    tip: 'Lis le abstract + conclusion d\'abord. Si ça accroche, lis en entier.',
-    links: [
-      { name: 'Papers With Code', desc: 'Papers ML + code open source', url: 'https://paperswithcode.com' },
-      { name: 'Distill.pub', desc: 'ML expliqué visuellement — très clair', url: 'https://distill.pub' },
-      { name: 'Hugging Face Blog', desc: 'Nouveautés IA par les praticiens', url: 'https://huggingface.co/blog' },
-      { name: 'arXiv CS.AI', desc: 'Les derniers papers en IA', url: 'https://arxiv.org/list/cs.AI/recent' },
-    ]
-  },
-  {
-    title: '📰 Veille quotidienne',
-    tip: 'TLDR AI = 5 min/jour max. Hacker News pour les discussions techniques en profondeur.',
-    links: [
-      { name: 'TLDR AI', desc: 'Newsletter IA — 5 min par jour', url: 'https://tldr.tech/ai' },
-      { name: 'Hacker News', desc: 'Actualité tech commentée par des ingénieurs', url: 'https://news.ycombinator.com' },
-      { name: 'The Verge — AI', desc: 'Tech grand public + IA', url: 'https://www.theverge.com/ai-artificial-intelligence' },
-      { name: 'MIT Tech Review', desc: 'Analyses profondes sur la tech', url: 'https://www.technologyreview.com' },
-    ]
-  },
-  {
-    title: '🎓 Apprendre & progresser',
-    tip: 'Complète avec Andrej Karpathy sur YouTube — le meilleur pour comprendre les LLMs de zéro.',
-    links: [
-      { name: 'fast.ai', desc: 'Deep learning pratique, gratuit', url: 'https://www.fast.ai' },
-      { name: 'CS50 AI (Harvard)', desc: 'Introduction à l\'IA par Harvard', url: 'https://cs50.harvard.edu/ai/' },
-      { name: 'Roadmap.sh — AI & Data', desc: 'Roadmap pour devenir AI Engineer', url: 'https://roadmap.sh/ai-data-scientist' },
-      { name: 'Kaggle Learn', desc: 'Notebooks pratiques ML/Data', url: 'https://www.kaggle.com/learn' },
-    ]
-  },
-];
-
-function renderRessources() {
-  const container = document.getElementById('res-sections');
-  if (!container) return;
-  container.innerHTML = '';
-  RESOURCES.forEach(group => {
-    const g = document.createElement('div');
-    g.className = 'res-group';
-    g.innerHTML = `<div class="res-group-title">${group.title}</div>`;
-    const list = document.createElement('div');
-    list.className = 'res-list';
-    group.links.forEach(l => {
-      const a = document.createElement('a');
-      a.className = 'res-link';
-      a.href = l.url;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.innerHTML = `<span class="res-link-left">
-        <span class="res-link-name">${l.name}</span>
-        <span class="res-link-desc">${l.desc}</span>
-      </span>
-      <span class="res-link-arrow">↗</span>`;
+function renderRessources(){
+  const container=document.getElementById('res-sections');if(!container)return;
+  container.innerHTML='';
+  RESOURCES.forEach(group=>{
+    const g=document.createElement('div');g.className='res-group';
+    g.innerHTML=`<div class="res-group-title">${group.title}</div>`;
+    const list=document.createElement('div');list.className='res-list';
+    group.links.forEach(l=>{
+      const a=document.createElement('a');a.className='res-link';a.href=l.url;a.target='_blank';a.rel='noopener noreferrer';
+      a.innerHTML=`<span class="res-link-left"><span class="res-link-name">${l.name}</span><span class="res-link-desc">${l.desc}</span></span><span class="res-link-arrow">↗</span>`;
       list.appendChild(a);
     });
     g.appendChild(list);
-    if (group.tip) {
-      const tip = document.createElement('div');
-      tip.className = 'res-tip';
-      tip.textContent = '💡 ' + group.tip;
-      g.appendChild(tip);
-    }
+    if(group.tip){const tip=document.createElement('div');tip.className='res-tip';tip.textContent='💡 '+group.tip;g.appendChild(tip);}
     container.appendChild(g);
   });
 }
 renderRessources();
-
-// ── Tab nav ─────────────────────────────────────────────
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
   });
 });
-
-// ── Month nav ────────────────────────────────────────────
-document.getElementById('prev-month').addEventListener('click', () => {
-  currentMonth--;
-  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  renderAll();
-});
-document.getElementById('next-month').addEventListener('click', () => {
-  currentMonth++;
-  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-  renderAll();
-});
-
-// ── Theme toggle ─────────────────────────────────────────
-const themeBtn = document.getElementById('theme-toggle');
-function applyTheme(t) {
-  document.documentElement.dataset.theme = t;
-  themeBtn.textContent = t === 'dark' ? '☀' : '🌙';
-  try { localStorage.setItem('tracker_theme', t); } catch {}
-}
-themeBtn.addEventListener('click', () => {
-  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
-});
-try {
-  const saved = localStorage.getItem('tracker_theme');
-  if (saved) applyTheme(saved);
-} catch {}
-
-// ── Init ─────────────────────────────────────────────────
-const t = today();
-currentYear = t.y;
-currentMonth = t.m;
-renderAll();
+document.getElementById('prev-month').addEventListener('click',()=>{currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--;}renderAll();});
+document.getElementById('next-month').addEventListener('click',()=>{currentMonth++;if(currentMonth>11){currentMonth=0;currentYear++;}renderAll();});
+const themeBtn=document.getElementById('theme-toggle');
+function applyTheme(t){document.documentElement.dataset.theme=t;themeBtn.textContent=t==='dark'?'☀':'🌙';try{localStorage.setItem('tracker_theme',t)}catch{}}
+themeBtn.addEventListener('click',()=>{applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');});
+try{const saved=localStorage.getItem('tracker_theme');if(saved)applyTheme(saved);}catch{}
+const t=today();currentYear=t.y;currentMonth=t.m;renderAll();
 </script>
+</body>
+</html>
