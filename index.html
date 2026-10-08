@@ -108,18 +108,33 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
 .tab-btn.active{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
-.res-sections{display:flex;flex-direction:column;gap:16px}
+
+/* ── Ressources ── */
+.res-sections{display:flex;flex-direction:column;gap:20px}
 .res-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.res-group-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fg2);padding:10px 14px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.res-group-header{padding:10px 14px 8px;border-bottom:1px solid var(--border)}
+.res-group-title{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg)}
+.res-group-sub{font-size:11px;color:var(--fg2);margin-top:2px;line-height:1.4}
 .res-list{display:flex;flex-direction:column}
-.res-link{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;text-decoration:none;color:var(--fg);border-bottom:1px solid var(--border);transition:background .12s;gap:8px}
+.res-link{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;text-decoration:none;color:var(--fg);border-bottom:1px solid var(--border);transition:background .12s;gap:10px}
 .res-link:last-child{border-bottom:none}
 .res-link:hover{background:var(--surface2)}
-.res-link-left{display:flex;flex-direction:column;gap:2px}
+.res-link-left{display:flex;flex-direction:column;gap:3px;flex:1}
 .res-link-name{font-size:13px;font-weight:500}
+.res-link-meta{display:flex;align-items:center;gap:6px}
 .res-link-desc{font-size:11px;color:var(--fg2)}
+.res-badge{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:1px 5px;border-radius:99px;flex-shrink:0}
+.badge-video{background:var(--warn-lt);color:var(--warn)}
+.badge-article{background:var(--accent-lt);color:var(--accent)}
+.badge-cours{background:var(--gold-lt);color:var(--gold)}
+.badge-newsletter{background:#e8e0f5;color:#7c4dbd}
+.badge-podcast{background:#fce4ec;color:#c2185b}
 .res-link-arrow{font-size:14px;color:var(--fg2);flex-shrink:0}
 .res-tip{font-size:11px;color:var(--fg2);padding:8px 14px;background:var(--accent-lt);border-top:1px solid var(--border);line-height:1.5}
+
+/* ordre lecture */
+.res-order{font-size:9px;font-family:var(--font-mono);font-weight:700;color:var(--fg2);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;flex-shrink:0}
+
 @media(max-width:520px){.kpi-row{grid-template-columns:1fr 1fr}.review-grid{grid-template-columns:1fr}.mood-grid{grid-template-columns:1fr}}
 @media(max-width:360px){.kpi-row{grid-template-columns:1fr}}
 </style>
@@ -171,7 +186,7 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
       <div class="review-grid" id="review-grid"></div>
     </div>
     <div class="tab-pane" id="tab-ressources">
-      <p class="section-title">Ressources Tech & IA</p>
+      <p class="section-title">Parcours guidé — IA & Informatique</p>
       <div class="res-sections" id="res-sections"></div>
     </div>
     <div class="tab-pane" id="tab-stats">
@@ -196,33 +211,74 @@ const HABITS=[
   {id:'article',name:'1 grand article de fond 📰',tag:'quotidien',freq:'daily'},
   {id:'revise',name:'Réviser 1h 📚',tag:'quotidien',freq:'daily'},
 ];
+
+// ─── RESSOURCES GUIDÉES ────────────────────────────────────────────────────
 const RESOURCES=[
-  {title:'🌍 Wikipedia EN — Culture Tech',tip:"Méthode : lis d'abord en FR pour le contexte, puis bascule en EN. Résume en 3 points.",links:[
-    {name:'Artificial intelligence',desc:"Vue d'ensemble de l'IA",url:'https://en.wikipedia.org/wiki/Artificial_intelligence'},
-    {name:'Machine learning',desc:'Fondamentaux du ML',url:'https://en.wikipedia.org/wiki/Machine_learning'},
-    {name:'Large language model',desc:'Comment fonctionnent les LLMs',url:'https://en.wikipedia.org/wiki/Large_language_model'},
-    {name:'Transformer (deep learning)',desc:'Architecture des transformers',url:'https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)'},
-    {name:'Simple English Wikipedia',desc:'Phrases courtes — idéal pour débuter',url:'https://simple.wikipedia.org/wiki/Main_Page'},
-  ]},
-  {title:'📄 Papers & Research',tip:"Lis le abstract + conclusion d'abord.",links:[
-    {name:'Papers With Code',desc:'Papers ML + code open source',url:'https://paperswithcode.com'},
-    {name:'Distill.pub',desc:'ML expliqué visuellement',url:'https://distill.pub'},
-    {name:'Hugging Face Blog',desc:'Nouveautés IA par les praticiens',url:'https://huggingface.co/blog'},
-    {name:'arXiv CS.AI',desc:'Les derniers papers en IA',url:'https://arxiv.org/list/cs.AI/recent'},
-  ]},
-  {title:'📰 Veille quotidienne',tip:'TLDR AI = 5 min/jour max.',links:[
-    {name:'TLDR AI',desc:'Newsletter IA — 5 min par jour',url:'https://tldr.tech/ai'},
-    {name:'Hacker News',desc:'Actualité tech commentée par des ingénieurs',url:'https://news.ycombinator.com'},
-    {name:'The Verge — AI',desc:'Tech grand public + IA',url:'https://www.theverge.com/ai-artificial-intelligence'},
-    {name:'MIT Tech Review',desc:'Analyses profondes sur la tech',url:'https://www.technologyreview.com'},
-  ]},
-  {title:'🎓 Apprendre & progresser',tip:'Complète avec Andrej Karpathy sur YouTube.',links:[
-    {name:'fast.ai',desc:'Deep learning pratique, gratuit',url:'https://www.fast.ai'},
-    {name:'CS50 AI (Harvard)',desc:"Introduction à l'IA par Harvard",url:'https://cs50.harvard.edu/ai/'},
-    {name:'Roadmap.sh — AI & Data',desc:'Roadmap pour devenir AI Engineer',url:'https://roadmap.sh/ai-data-scientist'},
-    {name:'Kaggle Learn',desc:'Notebooks pratiques ML/Data',url:'https://www.kaggle.com/learn'},
-  ]},
+  {
+    title:'🧠 LLMs — Comment ça marche',
+    sub:'Parcours du débutant à l\'expert. Suis dans l\'ordre.',
+    tip:'Commence par la vidéo Karpathy — c\'est la meilleure introduction qui existe.',
+    links:[
+      {order:'1',name:'Intro aux LLMs — Andrej Karpathy',desc:'1h de vidéo, ex-Tesla AI / OpenAI. La référence absolue.',badge:'video',url:'https://www.youtube.com/watch?v=zjkBMFhNj_g'},
+      {order:'2',name:'Visualisation des Transformers',desc:'Voir l\'architecture attention step by step.',badge:'article',url:'https://jalammar.github.io/illustrated-transformer/'},
+      {order:'3',name:'Build GPT from scratch — Karpathy',desc:'Coder un mini-GPT en Python. 2h mais ultra clair.',badge:'video',url:'https://www.youtube.com/watch?v=kCc8FmEb1nY'},
+      {order:'4',name:'3Blue1Brown — Neural Networks',desc:'Série de 4 vidéos animées, maths accessibles.',badge:'video',url:'https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi'},
+      {order:'5',name:'Attention Is All You Need (paper)',desc:'Le paper original des Transformers (2017). Lis abstract + fig. 1.',badge:'article',url:'https://arxiv.org/abs/1706.03762'},
+    ]
+  },
+  {
+    title:'⚙️ MLOps — Mettre l\'IA en prod',
+    sub:'Apprendre à déployer, monitorer et maintenir des modèles.',
+    tip:'MLOps = DevOps + Data. Si tu maîtrises Docker et Git, tu pars avec une longueur d\'avance.',
+    links:[
+      {order:'1',name:'MLOps Zoomcamp (gratuit)',desc:'Cours complet MLflow, Prefect, Docker, monitoring. 6 semaines.',badge:'cours',url:'https://github.com/DataTalksClub/mlops-zoomcamp'},
+      {order:'2',name:'Made With ML — MLOps',desc:'Guide pratique structuré par Goku Mohandas.',badge:'cours',url:'https://madewithml.com/#mlops'},
+      {order:'3',name:'MLflow Quickstart',desc:'Tracking d\'expériences en 10 min.',badge:'article',url:'https://mlflow.org/docs/latest/quickstart.html'},
+      {order:'4',name:'Evidently AI Blog',desc:'Comment monitorer la dérive de données en prod.',badge:'article',url:'https://www.evidentlyai.com/blog'},
+      {order:'5',name:'Full Stack Deep Learning',desc:'De l\'idée au déploiement — cours Berkeley gratuit.',badge:'cours',url:'https://fullstackdeeplearning.com/course/2022/'},
+    ]
+  },
+  {
+    title:'🐍 Python Data & ML pratique',
+    sub:'Les bases solides avant tout. Notebooks, pandas, sklearn.',
+    tip:'Kaggle Learn est gratuit et interactif — chaque module prend 1-2h max.',
+    links:[
+      {order:'1',name:'Kaggle — Python (gratuit)',desc:'Bases Python orientées data. Interactif, 5h.',badge:'cours',url:'https://www.kaggle.com/learn/python'},
+      {order:'2',name:'Kaggle — Pandas',desc:'Manipulation de données, le must.',badge:'cours',url:'https://www.kaggle.com/learn/pandas'},
+      {order:'3',name:'Kaggle — Intro to ML',desc:'Ton premier modèle en 3h.',badge:'cours',url:'https://www.kaggle.com/learn/intro-to-machine-learning'},
+      {order:'4',name:'fast.ai Practical Deep Learning',desc:'Top-down : tu codes avant de comprendre les maths.',badge:'cours',url:'https://course.fast.ai'},
+      {order:'5',name:'Python Data Science Handbook',desc:'Livre complet gratuit en ligne (NumPy, Pandas, Sklearn, Matplotlib).',badge:'article',url:'https://jakevdp.github.io/PythonDataScienceHandbook/'},
+    ]
+  },
+  {
+    title:'🤖 RAG & Agents IA',
+    sub:'Construire des apps intelligentes avec les LLMs.',
+    tip:'LangChain change souvent. Préfère d\'abord comprendre le concept RAG avec LlamaIndex.',
+    links:[
+      {order:'1',name:'RAG expliqué — IBM',desc:'Comprendre Retrieval-Augmented Generation en 8 min.',badge:'video',url:'https://www.youtube.com/watch?v=T-D1OfcDW1M'},
+      {order:'2',name:'LlamaIndex — Getting Started',desc:'Le framework RAG le plus clair pour débuter.',badge:'cours',url:'https://docs.llamaindex.ai/en/stable/getting_started/starter_example/'},
+      {order:'3',name:'LangChain Academy',desc:'Cours officiel sur les agents et les chaînes.',badge:'cours',url:'https://academy.langchain.com'},
+      {order:'4',name:'Build a RAG app — LangChain',desc:'Tutoriel officiel complet pas à pas.',badge:'article',url:'https://python.langchain.com/docs/tutorials/rag/'},
+      {order:'5',name:'Hugging Face Agents Course',desc:'Créer des agents IA autonomes, gratuit.',badge:'cours',url:'https://huggingface.co/learn/agents-course/unit0/introduction'},
+    ]
+  },
+  {
+    title:'📡 Veille — Actu, Cyber & IA',
+    sub:'Ce que tu lis chaque jour pour rester à jour sans te perdre.',
+    tip:'5 min le matin sur TLDR AI + Hacker News = tu rates rien d\'important.',
+    links:[
+      {order:'',name:'TLDR AI — Newsletter quotidienne',desc:'Les 5 infos IA du jour, en 5 min. Gratuit.',badge:'newsletter',url:'https://tldr.tech/ai'},
+      {order:'',name:'Hacker News',desc:'La communauté tech la plus pointue. Lis les commentaires.',badge:'article',url:'https://news.ycombinator.com'},
+      {order:'',name:'Krebs on Security',desc:'Référence cybersécurité — scandales, fuites, analyses.',badge:'article',url:'https://krebsonsecurity.com'},
+      {order:'',name:'The Hacker News (cyber)',desc:'Actu cybersécurité quotidienne.',badge:'article',url:'https://thehackernews.com'},
+      {order:'',name:'MIT Technology Review',desc:'Articles de fond sur la tech et ses impacts sociétaux.',badge:'article',url:'https://www.technologyreview.com'},
+      {order:'',name:'Lex Fridman Podcast',desc:'Interviews longues avec les meilleurs chercheurs IA / tech.',badge:'podcast',url:'https://lexfridman.com/podcast/'},
+      {order:'',name:'The Verge — AI',desc:'Actu IA grand public, facile à lire.',badge:'article',url:'https://www.theverge.com/ai-artificial-intelligence'},
+    ]
+  },
 ];
+
+// ── State ──
 let currentYear,currentMonth;
 function today(){const d=new Date();return{y:d.getFullYear(),m:d.getMonth(),d:d.getDate()}}
 function storeKey(y,m){return`tracker_${y}_${m}`}
@@ -366,16 +422,26 @@ function renderStats(y,m,state,days){
     lb.appendChild(row);
   });
 }
+
 function renderRessources(){
   const container=document.getElementById('res-sections');if(!container)return;
   container.innerHTML='';
+  const BADGE_LABELS={video:'▶ Vidéo',article:'📄 Article',cours:'🎓 Cours',newsletter:'📬 Newsletter',podcast:'🎙 Podcast'};
   RESOURCES.forEach(group=>{
     const g=document.createElement('div');g.className='res-group';
-    g.innerHTML=`<div class="res-group-title">${group.title}</div>`;
+    g.innerHTML=`<div class="res-group-header"><div class="res-group-title">${group.title}</div>${group.sub?`<div class="res-group-sub">${group.sub}</div>`:''}</div>`;
     const list=document.createElement('div');list.className='res-list';
     group.links.forEach(l=>{
       const a=document.createElement('a');a.className='res-link';a.href=l.url;a.target='_blank';a.rel='noopener noreferrer';
-      a.innerHTML=`<span class="res-link-left"><span class="res-link-name">${l.name}</span><span class="res-link-desc">${l.desc}</span></span><span class="res-link-arrow">↗</span>`;
+      a.innerHTML=`<span class="res-link-left">
+        <span class="res-link-name">${l.name}</span>
+        <span class="res-link-meta">
+          ${l.order?`<span class="res-order">Étape ${l.order}</span>`:''}
+          <span class="res-badge badge-${l.badge}">${BADGE_LABELS[l.badge]||l.badge}</span>
+          <span class="res-link-desc">${l.desc}</span>
+        </span>
+      </span>
+      <span class="res-link-arrow">↗</span>`;
       list.appendChild(a);
     });
     g.appendChild(list);
@@ -384,6 +450,7 @@ function renderRessources(){
   });
 }
 renderRessources();
+
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
