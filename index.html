@@ -135,6 +135,22 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
 /* ordre lecture */
 .res-order{font-size:9px;font-family:var(--font-mono);font-weight:700;color:var(--fg2);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;flex-shrink:0}
 
+/* ── Programme du jour ── */
+.today-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:4px}
+.today-header{padding:10px 14px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.today-day{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.today-date{font-size:11px;color:var(--fg2);font-family:var(--font-mono)}
+.today-links{display:flex;flex-direction:column}
+.today-link{display:flex;align-items:center;gap:10px;padding:11px 14px;text-decoration:none;color:var(--fg);border-bottom:1px solid var(--border);transition:background .12s}
+.today-link:last-child{border-bottom:none}
+.today-link:hover{background:var(--surface2)}
+.today-link-icon{font-size:18px;flex-shrink:0;width:28px;text-align:center}
+.today-link-body{flex:1;display:flex;flex-direction:column;gap:2px}
+.today-link-cat{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg2)}
+.today-link-name{font-size:13px;font-weight:500}
+.today-link-desc{font-size:11px;color:var(--fg2)}
+.today-arrow{font-size:14px;color:var(--fg2)}
+
 @media(max-width:520px){.kpi-row{grid-template-columns:1fr 1fr}.review-grid{grid-template-columns:1fr}.mood-grid{grid-template-columns:1fr}}
 @media(max-width:360px){.kpi-row{grid-template-columns:1fr}}
 </style>
@@ -186,7 +202,9 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
       <div class="review-grid" id="review-grid"></div>
     </div>
     <div class="tab-pane" id="tab-ressources">
-      <p class="section-title">Parcours guidé — IA & Informatique</p>
+      <p class="section-title">Programme du jour</p>
+      <div id="today-program"></div>
+      <p class="section-title" style="margin-top:20px">Parcours guidé — IA & Informatique</p>
       <div class="res-sections" id="res-sections"></div>
     </div>
     <div class="tab-pane" id="tab-stats">
@@ -422,6 +440,170 @@ function renderStats(y,m,state,days){
     lb.appendChild(row);
   });
 }
+
+// ── Programme mensuel 31 jours ──────────────────────────────────────────────
+// 3 liens par jour : 📚 Apprendre | 🌍 Wikipedia EN | 🌐 Culture générale
+const PROGRAMME=[
+  // Jour 1
+  {learn:{name:'Intro aux LLMs — Andrej Karpathy',desc:'La meilleure intro qui existe. 1h.',url:'https://www.youtube.com/watch?v=zjkBMFhNj_g'},
+   wiki:{name:'Artificial intelligence',desc:'Vue d\'ensemble de l\'IA sur Wikipedia EN',url:'https://en.wikipedia.org/wiki/Artificial_intelligence'},
+   culture:{name:'Big Bang — Wikipedia EN',desc:'L\'origine de l\'univers expliquée simplement',url:'https://en.wikipedia.org/wiki/Big_Bang'}},
+  // Jour 2
+  {learn:{name:'The Illustrated Transformer',desc:'Visualisation step-by-step de l\'architecture.',url:'https://jalammar.github.io/illustrated-transformer/'},
+   wiki:{name:'Machine learning',desc:'Fondamentaux du ML',url:'https://en.wikipedia.org/wiki/Machine_learning'},
+   culture:{name:'Roman Empire — Wikipedia EN',desc:'L\'empire qui a façonné l\'Occident',url:'https://en.wikipedia.org/wiki/Roman_Empire'}},
+  // Jour 3
+  {learn:{name:'3Blue1Brown — Neural Networks (ep.1)',desc:'Les réseaux de neurones expliqués visuellement.',url:'https://www.youtube.com/watch?v=aircAruvnKk'},
+   wiki:{name:'Deep learning',desc:'Réseaux de neurones profonds',url:'https://en.wikipedia.org/wiki/Deep_learning'},
+   culture:{name:'Photography — Wikipedia EN',desc:'Histoire et science de la photo',url:'https://en.wikipedia.org/wiki/Photography'}},
+  // Jour 4
+  {learn:{name:'3Blue1Brown — Gradient Descent (ep.2)',desc:'Comment un réseau apprend.',url:'https://www.youtube.com/watch?v=IHZwWFHWa-w'},
+   wiki:{name:'Natural language processing',desc:'Comment les machines comprennent le texte',url:'https://en.wikipedia.org/wiki/Natural_language_processing'},
+   culture:{name:'Democracy — Wikipedia EN',desc:'Histoire et formes de la démocratie',url:'https://en.wikipedia.org/wiki/Democracy'}},
+  // Jour 5
+  {learn:{name:'3Blue1Brown — Backpropagation (ep.3)',desc:'L\'algorithme qui entraîne tous les modèles.',url:'https://www.youtube.com/watch?v=Ilg3gGewQ5U'},
+   wiki:{name:'Computer vision',desc:'Comment les machines voient',url:'https://en.wikipedia.org/wiki/Computer_vision'},
+   culture:{name:'Jazz — Wikipedia EN',desc:'Origines et évolution du jazz',url:'https://en.wikipedia.org/wiki/Jazz'}},
+  // Jour 6
+  {learn:{name:'Kaggle — Python Basics',desc:'Bases Python orientées data. Module 1.',url:'https://www.kaggle.com/learn/python'},
+   wiki:{name:'Large language model',desc:'Comment fonctionnent les LLMs',url:'https://en.wikipedia.org/wiki/Large_language_model'},
+   culture:{name:'Ancient Egypt — Wikipedia EN',desc:'L\'une des plus grandes civilisations',url:'https://en.wikipedia.org/wiki/Ancient_Egypt'}},
+  // Jour 7
+  {learn:{name:'Kaggle — Pandas (module 1)',desc:'Charger et explorer un DataFrame.',url:'https://www.kaggle.com/learn/pandas'},
+   wiki:{name:'Transformer (deep learning)',desc:'L\'architecture qui a tout changé',url:'https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)'},
+   culture:{name:'Climate change — Wikipedia EN',desc:'Le réchauffement climatique en détail',url:'https://en.wikipedia.org/wiki/Climate_change'}},
+  // Jour 8
+  {learn:{name:'Build GPT from scratch — Karpathy (partie 1)',desc:'Coder un mini-GPT. Regarde jusqu\'à 45min.',url:'https://www.youtube.com/watch?v=kCc8FmEb1nY'},
+   wiki:{name:'Reinforcement learning',desc:'Apprendre par récompenses',url:'https://en.wikipedia.org/wiki/Reinforcement_learning'},
+   culture:{name:'Chess — Wikipedia EN',desc:'Histoire et stratégie des échecs',url:'https://en.wikipedia.org/wiki/Chess'}},
+  // Jour 9
+  {learn:{name:'Build GPT from scratch — Karpathy (partie 2)',desc:'Reprends la vidéo à 45min, jusqu\'à la fin.',url:'https://www.youtube.com/watch?v=kCc8FmEb1nY&t=2700'},
+   wiki:{name:'Generative adversarial network',desc:'Les GANs pour générer des images',url:'https://en.wikipedia.org/wiki/Generative_adversarial_network'},
+   culture:{name:'Renaissance — Wikipedia EN',desc:'La révolution culturelle européenne du XVe',url:'https://en.wikipedia.org/wiki/Renaissance'}},
+  // Jour 10
+  {learn:{name:'Distill.pub — Attention and Memory',desc:'Article visuel sur le mécanisme d\'attention.',url:'https://distill.pub/2016/augmented-rnns/'},
+   wiki:{name:'Convolutional neural network',desc:'CNN pour la vision par ordinateur',url:'https://en.wikipedia.org/wiki/Convolutional_neural_network'},
+   culture:{name:'Quantum mechanics — Wikipedia EN',desc:'Introduction à la physique quantique',url:'https://en.wikipedia.org/wiki/Quantum_mechanics'}},
+  // Jour 11
+  {learn:{name:'RAG expliqué en 8min — IBM',desc:'Comprendre Retrieval-Augmented Generation.',url:'https://www.youtube.com/watch?v=T-D1OfcDW1M'},
+   wiki:{name:'Recurrent neural network',desc:'RNN et mémoire séquentielle',url:'https://en.wikipedia.org/wiki/Recurrent_neural_network'},
+   culture:{name:'Blockchain — Wikipedia EN',desc:'Comment fonctionne la blockchain',url:'https://en.wikipedia.org/wiki/Blockchain'}},
+  // Jour 12
+  {learn:{name:'LlamaIndex — Starter Example',desc:'Ton premier pipeline RAG en Python.',url:'https://docs.llamaindex.ai/en/stable/getting_started/starter_example/'},
+   wiki:{name:'Diffusion model',desc:'Comment fonctionnent Stable Diffusion et DALL-E',url:'https://en.wikipedia.org/wiki/Diffusion_model'},
+   culture:{name:'Space exploration — Wikipedia EN',desc:'Histoire de la conquête spatiale',url:'https://en.wikipedia.org/wiki/Space_exploration'}},
+  // Jour 13
+  {learn:{name:'MLflow Quickstart',desc:'Tracker tes expériences ML en 15min.',url:'https://mlflow.org/docs/latest/quickstart.html'},
+   wiki:{name:'Generative pre-trained transformer',desc:'GPT, l\'architecture derrière ChatGPT',url:'https://en.wikipedia.org/wiki/Generative_pre-trained_transformer'},
+   culture:{name:'Internet — Wikipedia EN',desc:'Histoire et fonctionnement d\'Internet',url:'https://en.wikipedia.org/wiki/Internet'}},
+  // Jour 14
+  {learn:{name:'Hugging Face — Transformers en 5min',desc:'Utiliser un modèle pré-entraîné en 3 lignes.',url:'https://huggingface.co/docs/transformers/quicktour'},
+   wiki:{name:'BERT (language model)',desc:'Le modèle de Google qui a tout changé en NLP',url:'https://en.wikipedia.org/wiki/BERT_(language_model)'},
+   culture:{name:'Philosophy of mind — Wikipedia EN',desc:'Conscience, identité, intelligence',url:'https://en.wikipedia.org/wiki/Philosophy_of_mind'}},
+  // Jour 15
+  {learn:{name:'fast.ai — Lesson 1 (pratique)',desc:'Entraîner un classifier d\'images sans maths.',url:'https://course.fast.ai/Lessons/lesson1.html'},
+   wiki:{name:'Autonomous vehicle',desc:'Comment fonctionnent les voitures autonomes',url:'https://en.wikipedia.org/wiki/Autonomous_vehicle'},
+   culture:{name:'Music theory — Wikipedia EN',desc:'Comprendre comment la musique est construite',url:'https://en.wikipedia.org/wiki/Music_theory'}},
+  // Jour 16
+  {learn:{name:'Papers With Code — Top trending',desc:'Regarde les 3 papers les plus vus cette semaine.',url:'https://paperswithcode.com'},
+   wiki:{name:'Robotics',desc:'L\'IA incarnée dans des machines physiques',url:'https://en.wikipedia.org/wiki/Robotics'},
+   culture:{name:'Psychology — Wikipedia EN',desc:'Introduction à la psychologie humaine',url:'https://en.wikipedia.org/wiki/Psychology'}},
+  // Jour 17
+  {learn:{name:'LangChain Academy — Intro',desc:'Concepts de base des chaînes et agents.',url:'https://academy.langchain.com'},
+   wiki:{name:'Cloud computing',desc:'AWS, GCP, Azure — comment ça marche',url:'https://en.wikipedia.org/wiki/Cloud_computing'},
+   culture:{name:'Evolution — Wikipedia EN',desc:'La théorie de Darwin expliquée',url:'https://en.wikipedia.org/wiki/Evolution'}},
+  // Jour 18
+  {learn:{name:'Made With ML — Baselines',desc:'Comment créer une baseline solide en ML.',url:'https://madewithml.com/courses/mlops/baselines/'},
+   wiki:{name:'Semiconductor',desc:'Les puces qui font tourner l\'IA',url:'https://en.wikipedia.org/wiki/Semiconductor'},
+   culture:{name:'Architecture — Wikipedia EN',desc:'Histoire de l\'architecture mondiale',url:'https://en.wikipedia.org/wiki/Architecture'}},
+  // Jour 19
+  {learn:{name:'Evidently AI — Data Drift guide',desc:'Monitorer la qualité des données en production.',url:'https://www.evidentlyai.com/blog/ml-monitoring-data-drift-detection'},
+   wiki:{name:'Cybersecurity',desc:'Sécurité informatique — concepts clés',url:'https://en.wikipedia.org/wiki/Computer_security'},
+   culture:{name:'Economics — Wikipedia EN',desc:'Introduction à l\'économie mondiale',url:'https://en.wikipedia.org/wiki/Economics'}},
+  // Jour 20
+  {learn:{name:'Kaggle — Intro to ML (module 1)',desc:'Ton premier modèle de prédiction.',url:'https://www.kaggle.com/learn/intro-to-machine-learning'},
+   wiki:{name:'Encryption',desc:'Comment fonctionne le chiffrement',url:'https://en.wikipedia.org/wiki/Encryption'},
+   culture:{name:'Sociology — Wikipedia EN',desc:'Comment les sociétés humaines fonctionnent',url:'https://en.wikipedia.org/wiki/Sociology'}},
+  // Jour 21
+  {learn:{name:'Attention Is All You Need — abstract',desc:'Lis uniquement l\'abstract + la figure 1 du paper.',url:'https://arxiv.org/abs/1706.03762'},
+   wiki:{name:'API (application programming interface)',desc:'Les APIs qui connectent tous les services',url:'https://en.wikipedia.org/wiki/API'},
+   culture:{name:'Nuclear power — Wikipedia EN',desc:'L\'énergie nucléaire, avantages et risques',url:'https://en.wikipedia.org/wiki/Nuclear_power'}},
+  // Jour 22
+  {learn:{name:'HF Blog — LoRA fine-tuning expliqué',desc:'Comment fine-tuner un LLM à moindre coût.',url:'https://huggingface.co/blog/lora'},
+   wiki:{name:'Computer network',desc:'Comment les réseaux informatiques fonctionnent',url:'https://en.wikipedia.org/wiki/Computer_network'},
+   culture:{name:'Linguistics — Wikipedia EN',desc:'La science du langage humain',url:'https://en.wikipedia.org/wiki/Linguistics'}},
+  // Jour 23
+  {learn:{name:'Full Stack DL — Lecture 1',desc:'De l\'idée au déploiement — vue d\'ensemble.',url:'https://fullstackdeeplearning.com/course/2022/lecture-1-course-vision-and-when-to-use-ml/'},
+   wiki:{name:'Operating system',desc:'Linux, Windows, macOS — comment ça marche',url:'https://en.wikipedia.org/wiki/Operating_system'},
+   culture:{name:'Nutrition — Wikipedia EN',desc:'Comment l\'alimentation affecte le corps',url:'https://en.wikipedia.org/wiki/Nutrition'}},
+  // Jour 24
+  {learn:{name:'Python DS Handbook — NumPy',desc:'Chapitre NumPy complet, gratuit en ligne.',url:'https://jakevdp.github.io/PythonDataScienceHandbook/02.00-introduction-to-numpy.html'},
+   wiki:{name:'Docker (software)',desc:'Conteneurisation — comment ça marche',url:'https://en.wikipedia.org/wiki/Docker_(software)'},
+   culture:{name:'Ancient Rome — Wikipedia EN',desc:'Civilisation romaine, de la République à l\'Empire',url:'https://en.wikipedia.org/wiki/Ancient_Rome'}},
+  // Jour 25
+  {learn:{name:'HF Agents Course — Unit 1',desc:'Introduction aux agents IA autonomes.',url:'https://huggingface.co/learn/agents-course/unit1/introduction'},
+   wiki:{name:'Kubernetes',desc:'Orchestration de conteneurs en production',url:'https://en.wikipedia.org/wiki/Kubernetes'},
+   culture:{name:'Cognitive science — Wikipedia EN',desc:'Comment fonctionne le cerveau humain',url:'https://en.wikipedia.org/wiki/Cognitive_science'}},
+  // Jour 26
+  {learn:{name:'Roadmap.sh — AI Engineer',desc:'Lis la roadmap complète et note ce que tu ne connais pas.',url:'https://roadmap.sh/ai-data-scientist'},
+   wiki:{name:'Microprocessor',desc:'Le cœur de chaque ordinateur',url:'https://en.wikipedia.org/wiki/Microprocessor'},
+   culture:{name:'Buddhism — Wikipedia EN',desc:'Histoire et philosophie du bouddhisme',url:'https://en.wikipedia.org/wiki/Buddhism'}},
+  // Jour 27
+  {learn:{name:'CS50 AI — Search algorithms',desc:'Lecture 0 : comment une IA "cherche" une solution.',url:'https://cs50.harvard.edu/ai/2024/weeks/0/'},
+   wiki:{name:'Quantum computing',desc:'L\'informatique quantique et son futur',url:'https://en.wikipedia.org/wiki/Quantum_computing'},
+   culture:{name:'World War II — Wikipedia EN',desc:'La Seconde Guerre mondiale en détail',url:'https://en.wikipedia.org/wiki/World_War_II'}},
+  // Jour 28
+  {learn:{name:'CS50 AI — Knowledge & Logic',desc:'Lecture 1 : représentation des connaissances.',url:'https://cs50.harvard.edu/ai/2024/weeks/1/'},
+   wiki:{name:'5G',desc:'La 5G, comment ça marche vraiment',url:'https://en.wikipedia.org/wiki/5G'},
+   culture:{name:'Philosophy — Wikipedia EN',desc:'Introduction à la philosophie occidentale',url:'https://en.wikipedia.org/wiki/Philosophy'}},
+  // Jour 29
+  {learn:{name:'Distill.pub — Feature Visualization',desc:'Comprendre ce que voit un réseau de neurones.',url:'https://distill.pub/2017/feature-visualization/'},
+   wiki:{name:'Artificial general intelligence',desc:'L\'AGI — où en est-on vraiment ?',url:'https://en.wikipedia.org/wiki/Artificial_general_intelligence'},
+   culture:{name:'Astronomy — Wikipedia EN',desc:'L\'univers, les étoiles, les galaxies',url:'https://en.wikipedia.org/wiki/Astronomy'}},
+  // Jour 30
+  {learn:{name:'MIT Tech Review — AI section',desc:'Lis un article de fond sur l\'IA cette semaine.',url:'https://www.technologyreview.com/topic/artificial-intelligence/'},
+   wiki:{name:'Ethics of artificial intelligence',desc:'Les enjeux éthiques de l\'IA',url:'https://en.wikipedia.org/wiki/Ethics_of_artificial_intelligence'},
+   culture:{name:'Psychology of learning — Wikipedia EN',desc:'Comment le cerveau apprend et mémorise',url:'https://en.wikipedia.org/wiki/Learning'}},
+  // Jour 31
+  {learn:{name:'Bilan du mois — arXiv CS.AI',desc:'Lis les titres des papers IA du mois. Note ce qui t\'intéresse.',url:'https://arxiv.org/list/cs.AI/recent'},
+   wiki:{name:'History of the Internet',desc:'Comment Internet a été inventé',url:'https://en.wikipedia.org/wiki/History_of_the_Internet'},
+   culture:{name:'Creativity — Wikipedia EN',desc:'La créativité humaine et ses mécanismes',url:'https://en.wikipedia.org/wiki/Creativity'}},
+];
+
+function renderTodayProgram(){
+  const container=document.getElementById('today-program');
+  if(!container)return;
+  const d=new Date();
+  const day=d.getDate(); // 1-31
+  const prog=PROGRAMME[(day-1)%31];
+  const monthNames=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const dateStr=d.getDate()+' '+monthNames[d.getMonth()]+' '+d.getFullYear();
+  const items=[
+    {cat:'📚 Apprendre',icon:'🧠',...prog.learn},
+    {cat:'🌍 Wikipedia EN',icon:'📖',...prog.wiki},
+    {cat:'🌐 Culture générale',icon:'✨',...prog.culture},
+  ];
+  container.innerHTML=`
+    <div class="today-card">
+      <div class="today-header">
+        <span class="today-day">Jour ${day}</span>
+        <span class="today-date">${dateStr}</span>
+      </div>
+      <div class="today-links">
+        ${items.map(it=>`
+          <a class="today-link" href="${it.url}" target="_blank" rel="noopener noreferrer">
+            <span class="today-link-icon">${it.icon}</span>
+            <span class="today-link-body">
+              <span class="today-link-cat">${it.cat}</span>
+              <span class="today-link-name">${it.name}</span>
+              <span class="today-link-desc">${it.desc}</span>
+            </span>
+            <span class="today-arrow">↗</span>
+          </a>`).join('')}
+      </div>
+    </div>`;
+}
+renderTodayProgram();
 
 function renderRessources(){
   const container=document.getElementById('res-sections');if(!container)return;
