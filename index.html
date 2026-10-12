@@ -151,6 +151,32 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
 .today-link-desc{font-size:11px;color:var(--fg2)}
 .today-arrow{font-size:14px;color:var(--fg2)}
 
+/* ── Quiz TOEIC ── */
+.quiz-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+.quiz-header{padding:10px 14px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.quiz-title{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.quiz-type{font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px;background:var(--gold-lt);color:var(--gold)}
+.quiz-body{padding:14px}
+.quiz-question{font-size:14px;font-weight:500;line-height:1.5;margin-bottom:12px}
+.quiz-sentence{font-size:13px;color:var(--fg2);font-style:italic;margin-bottom:10px;padding:8px 12px;background:var(--surface2);border-radius:7px;border-left:3px solid var(--accent)}
+.quiz-options{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:background .12s,border-color .12s;background:var(--surface2);font-size:13px}
+.quiz-opt:hover{border-color:var(--accent);background:var(--accent-lt)}
+.quiz-opt.correct{border-color:#52b788;background:#d8ede3;color:#1a3328;font-weight:600}
+.quiz-opt.wrong{border-color:var(--warn);background:var(--warn-lt);color:var(--warn)}
+.quiz-opt.disabled{cursor:default;pointer-events:none}
+.quiz-opt-letter{width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;font-family:var(--font-mono)}
+.quiz-feedback{padding:10px 14px;border-top:1px solid var(--border);font-size:12px;line-height:1.5;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:var(--accent-lt);color:var(--accent)}
+.quiz-feedback.ko{background:var(--warn-lt);color:var(--warn)}
+.quiz-nav{padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-counter{font-size:11px;font-family:var(--font-mono);color:var(--fg2)}
+.quiz-next{padding:6px 14px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;display:none}
+.quiz-next.show{display:block}
+.quiz-score{text-align:center;padding:20px;font-size:15px;font-weight:600}
+.quiz-score-num{font-size:32px;font-weight:700;color:var(--accent);display:block;margin-bottom:4px}
+.quiz-restart{margin-top:10px;padding:8px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
 @media(max-width:520px){.kpi-row{grid-template-columns:1fr 1fr}.review-grid{grid-template-columns:1fr}.mood-grid{grid-template-columns:1fr}}
 @media(max-width:360px){.kpi-row{grid-template-columns:1fr}}
 </style>
@@ -178,6 +204,7 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
       <button class="tab-btn" data-tab="review">Weekly</button>
       <button class="tab-btn" data-tab="stats">Stats</button>
       <button class="tab-btn" data-tab="ressources">Liens</button>
+      <button class="tab-btn" data-tab="anglais">🇬🇧</button>
     </div>
     <div class="tab-pane active" id="tab-habits">
       <p class="section-title">Ce mois-ci</p>
@@ -207,6 +234,31 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
       <p class="section-title" style="margin-top:20px">Parcours guidé — IA & Informatique</p>
       <div class="res-sections" id="res-sections"></div>
     </div>
+    <div class="tab-pane" id="tab-anglais">
+      <p class="section-title">TOEIC — Entraînement quotidien</p>
+      <div id="toeic-quiz"></div>
+      <p class="section-title" style="margin-top:20px">Ressources TOEIC</p>
+      <div class="res-group">
+        <div class="res-list">
+          <a class="res-link" href="https://www.toeicbridge.com/practice" target="_blank" rel="noopener noreferrer">
+            <span class="res-link-left"><span class="res-link-name">TOEIC Practice Tests officiels</span><span class="res-link-meta"><span class="res-badge badge-cours">🎓 Cours</span><span class="res-link-desc">Tests officiels ETS — format réel</span></span></span><span class="res-link-arrow">↗</span>
+          </a>
+          <a class="res-link" href="https://www.examenglish.com/TOEIC/toeic_listening.htm" target="_blank" rel="noopener noreferrer">
+            <span class="res-link-left"><span class="res-link-name">Exam English — TOEIC Listening</span><span class="res-link-meta"><span class="res-badge badge-cours">🎓 Cours</span><span class="res-link-desc">Exercices de listening format TOEIC</span></span></span><span class="res-link-arrow">↗</span>
+          </a>
+          <a class="res-link" href="https://www.bbc.co.uk/learningenglish/english/features/6-minute-english" target="_blank" rel="noopener noreferrer">
+            <span class="res-link-left"><span class="res-link-name">BBC 6 Minute English</span><span class="res-link-meta"><span class="res-badge badge-podcast">🎙 Podcast</span><span class="res-link-desc">Podcast BBC avec transcript — parfait pour le listening TOEIC</span></span></span><span class="res-link-arrow">↗</span>
+          </a>
+          <a class="res-link" href="https://www.eslfast.com/robot/toeic/" target="_blank" rel="noopener noreferrer">
+            <span class="res-link-left"><span class="res-link-name">ESL Fast — TOEIC Vocabulary</span><span class="res-link-meta"><span class="res-badge badge-article">📄 Article</span><span class="res-link-desc">Vocabulaire thématique TOEIC (business, tech, travel…)</span></span></span><span class="res-link-arrow">↗</span>
+          </a>
+          <a class="res-link" href="https://www.podcastsinenglish.com" target="_blank" rel="noopener noreferrer">
+            <span class="res-link-left"><span class="res-link-name">Podcasts in English</span><span class="res-link-meta"><span class="res-badge badge-podcast">🎙 Podcast</span><span class="res-link-desc">Niveau B2-C1 — accent britannique et américain</span></span></span><span class="res-link-arrow">↗</span>
+          </a>
+        </div>
+        <div class="res-tip">💡 Pour le TOEIC 850+, concentre-toi sur la Part 5 (grammar) et Part 7 (long reading). C'est là que se jouent les derniers points.</div>
+      </div>
+    </div>
     <div class="tab-pane" id="tab-stats">
       <p class="section-title">Vue d'ensemble</p>
       <div class="kpi-row">
@@ -224,9 +276,9 @@ const HABITS=[
   {id:'gym',name:'Gym 💪',tag:'3x',freq:'alt'},
   {id:'sortie',name:'Sortie / Activité 🚴',tag:'hebdo',freq:'weekly'},
   {id:'veille',name:'Veille IA 🤖',tag:'quotidien',freq:'daily'},
-  {id:'wikien',name:'Wikipedia EN 🌍',tag:'quotidien',freq:'daily'},
-  {id:'learn',name:'Culture générale 🌐',tag:'quotidien',freq:'daily'},
   {id:'wikien',name:'Wikipedia EN 📖',tag:'quotidien',freq:'daily'},
+  {id:'learn',name:'Culture générale 🌐',tag:'quotidien',freq:'daily'},
+  {id:'toeic',name:'Anglais TOEIC 🇬🇧',tag:'quotidien',freq:'daily'},
   {id:'revise',name:'Réviser 1h 📚',tag:'quotidien',freq:'daily'},
 ];
 
@@ -442,133 +494,309 @@ function renderStats(y,m,state,days){
 }
 
 // ── Programme mensuel 31 jours ──────────────────────────────────────────────
-// 3 liens par jour : 📚 Apprendre | 🌍 Wikipedia EN | 🌐 Culture générale
+// 4 liens par jour : 📚 Apprendre | 🌍 Wikipedia EN | 🌐 Culture générale | 🇬🇧 TOEIC
+const TOEIC_LINKS=[
+  {name:'BBC 6 Min English — Technology',desc:'Listening + transcript. Vocabulaire tech.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240926'},
+  {name:'BBC 6 Min English — Science',desc:'Épisode science avec questions de compréhension.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240912'},
+  {name:'TOEIC Part 5 — Grammar Practice',desc:'10 questions de grammaire format Part 5.',url:'https://www.examenglish.com/TOEIC/toeic_reading.htm'},
+  {name:'Business English Vocabulary — Meetings',desc:'Vocabulaire réunions, indispensable TOEIC.',url:'https://www.eslfast.com/robot/toeic/toeic30.htm'},
+  {name:'BBC 6 Min English — Work & Business',desc:'Listening business anglais professionnel.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240905'},
+  {name:'TOEIC Listening Part 1 — Photos',desc:'Exercice description de photos en anglais.',url:'https://www.examenglish.com/TOEIC/toeic_listening_part1.htm'},
+  {name:'Vocabulary.com — TOEIC 1000 words',desc:'Les 1000 mots essentiels TOEIC.',url:'https://www.vocabulary.com/lists/52473'},
+  {name:'BBC 6 Min English — Environment',desc:'Vocabulaire environnement, souvent au TOEIC.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240821'},
+  {name:'TOEIC Part 7 — Reading Comprehension',desc:'Article long format TOEIC, entraîne la rapidité.',url:'https://www.examenglish.com/TOEIC/toeic_reading_part7.htm'},
+  {name:'English Grammar in Use — Tenses',desc:'Les temps verbaux en anglais business.',url:'https://www.bbc.co.uk/learningenglish/english/course/intermediate/unit-1/session-1'},
+  {name:'BBC 6 Min English — Health',desc:'Vocab santé et bien-être, courant TOEIC.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240807'},
+  {name:'TOEIC Email Reading Practice',desc:'Lire et comprendre des emails pro en anglais.',url:'https://www.examenglish.com/TOEIC/toeic_reading_part6.htm'},
+  {name:'Business English Pod — Negotiations',desc:'Podcast dialogues de négociation business.',url:'https://www.businessenglishpod.com/2023/01/10/bep-394-negotiating-2/'},
+  {name:'BBC 6 Min English — Finance',desc:'Vocabulaire finance et économie.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240724'},
+  {name:'TOEIC Listening Part 3 — Conversations',desc:'Exercices de conversation business.',url:'https://www.examenglish.com/TOEIC/toeic_listening_part3.htm'},
+  {name:'Common TOEIC Idioms',desc:'Les expressions idiomatiques les plus fréquentes.',url:'https://www.eslfast.com/robot/toeic/toeic40.htm'},
+  {name:'BBC 6 Min English — Travel',desc:'Vocabulaire voyages, très fréquent au TOEIC.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240711'},
+  {name:'TOEIC Part 2 — Question & Response',desc:'Exercices questions-réponses rapides.',url:'https://www.examenglish.com/TOEIC/toeic_listening_part2.htm'},
+  {name:'TED Talk — 10min (en anglais)',desc:'Écoute un TED avec sous-titres EN uniquement.',url:'https://www.ted.com/talks?sort=newest&duration=0-6'},
+  {name:'Business English Pod — Emails',desc:'Rédiger des emails formels en anglais.',url:'https://www.businessenglishpod.com/2023/02/07/bep-397-writing-professional-emails/'},
+  {name:'BBC 6 Min English — Technology 2',desc:'IA, robots, automatisation en anglais.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240627'},
+  {name:'TOEIC Vocabulary — HR & Management',desc:'Vocab RH, management, leadership.',url:'https://www.eslfast.com/robot/toeic/toeic50.htm'},
+  {name:'TOEIC Part 4 — Short Talks',desc:'Annonces, messages, exercices listening.',url:'https://www.examenglish.com/TOEIC/toeic_listening_part4.htm'},
+  {name:'BBC 6 Min English — Education',desc:'Vocabulaire éducation et formation.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240613'},
+  {name:'Common Connectors in English',desc:'However, although, despite… les connecteurs TOEIC.',url:'https://www.englishclub.com/vocabulary/linkers-addition.php'},
+  {name:'TOEIC Prepositions Practice',desc:'Les prépositions, piège classique TOEIC.',url:'https://www.englishclub.com/grammar/prepositions-at-in-on.php'},
+  {name:'TED Talk — Business (10min)',desc:'Un talk business avec sous-titres EN seulement.',url:'https://www.ted.com/topics/business'},
+  {name:'TOEIC Part 6 — Text Completion',desc:'Compléter un texte — format exact de l\'examen.',url:'https://www.examenglish.com/TOEIC/toeic_reading_part6.htm'},
+  {name:'Business English Pod — Presentations',desc:'Vocabulaire et structures pour présenter.',url:'https://www.businessenglishpod.com/2022/11/08/bep-386-presentations-in-english/'},
+  {name:'BBC 6 Min English — Society',desc:'Vocabulaire société, culture, tendances.',url:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-240530'},
+  {name:'TOEIC Full Mini-Test',desc:'Mini-test complet 20 questions — 15 min chrono.',url:'https://www.examenglish.com/TOEIC/toeic.htm'},
+];
 const PROGRAMME=[
   // Jour 1
   {learn:{name:'Intro aux LLMs — Andrej Karpathy',desc:'La meilleure intro qui existe. 1h.',url:'https://www.youtube.com/watch?v=zjkBMFhNj_g'},
    wiki:{name:'Artificial intelligence',desc:'Vue d\'ensemble de l\'IA sur Wikipedia EN',url:'https://en.wikipedia.org/wiki/Artificial_intelligence'},
-   culture:{name:'Big Bang — Wikipedia EN',desc:'L\'origine de l\'univers expliquée simplement',url:'https://en.wikipedia.org/wiki/Big_Bang'}},
+   culture:{name:'Big Bang — Wikipédia FR',desc:'L\'origine de l\'univers expliquée simplement',url:'https://fr.wikipedia.org/wiki/Big_Bang'},
+   toeic:TOEIC_LINKS[0]},
   // Jour 2
   {learn:{name:'The Illustrated Transformer',desc:'Visualisation step-by-step de l\'architecture.',url:'https://jalammar.github.io/illustrated-transformer/'},
    wiki:{name:'Machine learning',desc:'Fondamentaux du ML',url:'https://en.wikipedia.org/wiki/Machine_learning'},
-   culture:{name:'Roman Empire — Wikipedia EN',desc:'L\'empire qui a façonné l\'Occident',url:'https://en.wikipedia.org/wiki/Roman_Empire'}},
+   culture:{name:'Empire romain — Wikipédia FR',desc:'L\'empire qui a façonné l\'Occident',url:'https://fr.wikipedia.org/wiki/Empire_romain'},
+   toeic:TOEIC_LINKS[1]},
   // Jour 3
   {learn:{name:'3Blue1Brown — Neural Networks (ep.1)',desc:'Les réseaux de neurones expliqués visuellement.',url:'https://www.youtube.com/watch?v=aircAruvnKk'},
    wiki:{name:'Deep learning',desc:'Réseaux de neurones profonds',url:'https://en.wikipedia.org/wiki/Deep_learning'},
-   culture:{name:'Photography — Wikipedia EN',desc:'Histoire et science de la photo',url:'https://en.wikipedia.org/wiki/Photography'}},
+   culture:{name:'Photographie — Wikipédia FR',desc:'Histoire et science de la photo',url:'https://fr.wikipedia.org/wiki/Photographie'},
+   toeic:TOEIC_LINKS[2]},
   // Jour 4
   {learn:{name:'3Blue1Brown — Gradient Descent (ep.2)',desc:'Comment un réseau apprend.',url:'https://www.youtube.com/watch?v=IHZwWFHWa-w'},
    wiki:{name:'Natural language processing',desc:'Comment les machines comprennent le texte',url:'https://en.wikipedia.org/wiki/Natural_language_processing'},
-   culture:{name:'Democracy — Wikipedia EN',desc:'Histoire et formes de la démocratie',url:'https://en.wikipedia.org/wiki/Democracy'}},
+   culture:{name:'Démocratie — Wikipédia FR',desc:'Histoire et formes de la démocratie',url:'https://fr.wikipedia.org/wiki/D%C3%A9mocratie'},
+   toeic:TOEIC_LINKS[3]},
   // Jour 5
   {learn:{name:'3Blue1Brown — Backpropagation (ep.3)',desc:'L\'algorithme qui entraîne tous les modèles.',url:'https://www.youtube.com/watch?v=Ilg3gGewQ5U'},
    wiki:{name:'Computer vision',desc:'Comment les machines voient',url:'https://en.wikipedia.org/wiki/Computer_vision'},
-   culture:{name:'Jazz — Wikipedia EN',desc:'Origines et évolution du jazz',url:'https://en.wikipedia.org/wiki/Jazz'}},
+   culture:{name:'Jazz — Wikipédia FR',desc:'Origines et évolution du jazz',url:'https://fr.wikipedia.org/wiki/Jazz'},
+   toeic:TOEIC_LINKS[4]},
   // Jour 6
   {learn:{name:'Kaggle — Python Basics',desc:'Bases Python orientées data. Module 1.',url:'https://www.kaggle.com/learn/python'},
    wiki:{name:'Large language model',desc:'Comment fonctionnent les LLMs',url:'https://en.wikipedia.org/wiki/Large_language_model'},
-   culture:{name:'Ancient Egypt — Wikipedia EN',desc:'L\'une des plus grandes civilisations',url:'https://en.wikipedia.org/wiki/Ancient_Egypt'}},
+   culture:{name:'Égypte antique — Wikipédia FR',desc:'L\'une des plus grandes civilisations',url:'https://fr.wikipedia.org/wiki/Égypte_antique'},
+   toeic:TOEIC_LINKS[5]},
   // Jour 7
   {learn:{name:'Kaggle — Pandas (module 1)',desc:'Charger et explorer un DataFrame.',url:'https://www.kaggle.com/learn/pandas'},
    wiki:{name:'Transformer (deep learning)',desc:'L\'architecture qui a tout changé',url:'https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)'},
-   culture:{name:'Climate change — Wikipedia EN',desc:'Le réchauffement climatique en détail',url:'https://en.wikipedia.org/wiki/Climate_change'}},
+   culture:{name:'Réchauffement climatique — Wikipédia FR',desc:'Causes, effets et enjeux actuels',url:'https://fr.wikipedia.org/wiki/R%C3%A9chauffement_climatique'},
+   toeic:TOEIC_LINKS[6]},
   // Jour 8
   {learn:{name:'Build GPT from scratch — Karpathy (partie 1)',desc:'Coder un mini-GPT. Regarde jusqu\'à 45min.',url:'https://www.youtube.com/watch?v=kCc8FmEb1nY'},
    wiki:{name:'Reinforcement learning',desc:'Apprendre par récompenses',url:'https://en.wikipedia.org/wiki/Reinforcement_learning'},
-   culture:{name:'Chess — Wikipedia EN',desc:'Histoire et stratégie des échecs',url:'https://en.wikipedia.org/wiki/Chess'}},
+   culture:{name:'Échecs — Wikipédia FR',desc:'Histoire et stratégie des échecs',url:'https://fr.wikipedia.org/wiki/%C3%89checs'},
+   toeic:TOEIC_LINKS[7]},
   // Jour 9
   {learn:{name:'Build GPT from scratch — Karpathy (partie 2)',desc:'Reprends la vidéo à 45min, jusqu\'à la fin.',url:'https://www.youtube.com/watch?v=kCc8FmEb1nY&t=2700'},
    wiki:{name:'Generative adversarial network',desc:'Les GANs pour générer des images',url:'https://en.wikipedia.org/wiki/Generative_adversarial_network'},
-   culture:{name:'Renaissance — Wikipedia EN',desc:'La révolution culturelle européenne du XVe',url:'https://en.wikipedia.org/wiki/Renaissance'}},
+   culture:{name:'Renaissance — Wikipédia FR',desc:'La révolution culturelle européenne du XVe siècle',url:'https://fr.wikipedia.org/wiki/Renaissance'},
+   toeic:TOEIC_LINKS[8]},
   // Jour 10
   {learn:{name:'Distill.pub — Attention and Memory',desc:'Article visuel sur le mécanisme d\'attention.',url:'https://distill.pub/2016/augmented-rnns/'},
    wiki:{name:'Convolutional neural network',desc:'CNN pour la vision par ordinateur',url:'https://en.wikipedia.org/wiki/Convolutional_neural_network'},
-   culture:{name:'Quantum mechanics — Wikipedia EN',desc:'Introduction à la physique quantique',url:'https://en.wikipedia.org/wiki/Quantum_mechanics'}},
+   culture:{name:'Mécanique quantique — Wikipédia FR',desc:'Introduction à la physique quantique',url:'https://fr.wikipedia.org/wiki/M%C3%A9canique_quantique'},
+   toeic:TOEIC_LINKS[9]},
   // Jour 11
   {learn:{name:'RAG expliqué en 8min — IBM',desc:'Comprendre Retrieval-Augmented Generation.',url:'https://www.youtube.com/watch?v=T-D1OfcDW1M'},
    wiki:{name:'Recurrent neural network',desc:'RNN et mémoire séquentielle',url:'https://en.wikipedia.org/wiki/Recurrent_neural_network'},
-   culture:{name:'Blockchain — Wikipedia EN',desc:'Comment fonctionne la blockchain',url:'https://en.wikipedia.org/wiki/Blockchain'}},
+   culture:{name:'Blockchain — Wikipédia FR',desc:'Comment fonctionne la blockchain',url:'https://fr.wikipedia.org/wiki/Blockchain'},
+   toeic:TOEIC_LINKS[10]},
   // Jour 12
   {learn:{name:'LlamaIndex — Starter Example',desc:'Ton premier pipeline RAG en Python.',url:'https://docs.llamaindex.ai/en/stable/getting_started/starter_example/'},
    wiki:{name:'Diffusion model',desc:'Comment fonctionnent Stable Diffusion et DALL-E',url:'https://en.wikipedia.org/wiki/Diffusion_model'},
-   culture:{name:'Space exploration — Wikipedia EN',desc:'Histoire de la conquête spatiale',url:'https://en.wikipedia.org/wiki/Space_exploration'}},
+   culture:{name:'Conquête spatiale — Wikipédia FR',desc:'Histoire de l'exploration de l'espace',url:'https://fr.wikipedia.org/wiki/Conqu%C3%AAte_spatiale'},
+   toeic:TOEIC_LINKS[11]},
   // Jour 13
   {learn:{name:'MLflow Quickstart',desc:'Tracker tes expériences ML en 15min.',url:'https://mlflow.org/docs/latest/quickstart.html'},
    wiki:{name:'Generative pre-trained transformer',desc:'GPT, l\'architecture derrière ChatGPT',url:'https://en.wikipedia.org/wiki/Generative_pre-trained_transformer'},
-   culture:{name:'Internet — Wikipedia EN',desc:'Histoire et fonctionnement d\'Internet',url:'https://en.wikipedia.org/wiki/Internet'}},
+   culture:{name:'Internet — Wikipédia FR',desc:'Histoire et fonctionnement d\'Internet',url:'https://fr.wikipedia.org/wiki/Internet'},
+   toeic:TOEIC_LINKS[12]},
   // Jour 14
   {learn:{name:'Hugging Face — Transformers en 5min',desc:'Utiliser un modèle pré-entraîné en 3 lignes.',url:'https://huggingface.co/docs/transformers/quicktour'},
    wiki:{name:'BERT (language model)',desc:'Le modèle de Google qui a tout changé en NLP',url:'https://en.wikipedia.org/wiki/BERT_(language_model)'},
-   culture:{name:'Philosophy of mind — Wikipedia EN',desc:'Conscience, identité, intelligence',url:'https://en.wikipedia.org/wiki/Philosophy_of_mind'}},
+   culture:{name:'Philosophie de l'esprit — Wikipédia FR',desc:'Conscience, identité, intelligence',url:'https://fr.wikipedia.org/wiki/Philosophie_de_l%27esprit'},
+   toeic:TOEIC_LINKS[13]},
   // Jour 15
   {learn:{name:'fast.ai — Lesson 1 (pratique)',desc:'Entraîner un classifier d\'images sans maths.',url:'https://course.fast.ai/Lessons/lesson1.html'},
    wiki:{name:'Autonomous vehicle',desc:'Comment fonctionnent les voitures autonomes',url:'https://en.wikipedia.org/wiki/Autonomous_vehicle'},
-   culture:{name:'Music theory — Wikipedia EN',desc:'Comprendre comment la musique est construite',url:'https://en.wikipedia.org/wiki/Music_theory'}},
+   culture:{name:'Théorie musicale — Wikipédia FR',desc:'Comprendre comment la musique est construite',url:'https://fr.wikipedia.org/wiki/Th%C3%A9orie_musicale'},
+   toeic:TOEIC_LINKS[14]},
   // Jour 16
   {learn:{name:'Papers With Code — Top trending',desc:'Regarde les 3 papers les plus vus cette semaine.',url:'https://paperswithcode.com'},
    wiki:{name:'Robotics',desc:'L\'IA incarnée dans des machines physiques',url:'https://en.wikipedia.org/wiki/Robotics'},
-   culture:{name:'Psychology — Wikipedia EN',desc:'Introduction à la psychologie humaine',url:'https://en.wikipedia.org/wiki/Psychology'}},
+   culture:{name:'Psychologie — Wikipédia FR',desc:'Introduction à la psychologie humaine',url:'https://fr.wikipedia.org/wiki/Psychologie'},
+   toeic:TOEIC_LINKS[15]},
   // Jour 17
   {learn:{name:'LangChain Academy — Intro',desc:'Concepts de base des chaînes et agents.',url:'https://academy.langchain.com'},
    wiki:{name:'Cloud computing',desc:'AWS, GCP, Azure — comment ça marche',url:'https://en.wikipedia.org/wiki/Cloud_computing'},
-   culture:{name:'Evolution — Wikipedia EN',desc:'La théorie de Darwin expliquée',url:'https://en.wikipedia.org/wiki/Evolution'}},
+   culture:{name:'Évolution — Wikipédia FR',desc:'La théorie de Darwin expliquée',url:'https://fr.wikipedia.org/wiki/%C3%89volution_%28biologie%29'},
+   toeic:TOEIC_LINKS[16]},
   // Jour 18
   {learn:{name:'Made With ML — Baselines',desc:'Comment créer une baseline solide en ML.',url:'https://madewithml.com/courses/mlops/baselines/'},
    wiki:{name:'Semiconductor',desc:'Les puces qui font tourner l\'IA',url:'https://en.wikipedia.org/wiki/Semiconductor'},
-   culture:{name:'Architecture — Wikipedia EN',desc:'Histoire de l\'architecture mondiale',url:'https://en.wikipedia.org/wiki/Architecture'}},
+   culture:{name:'Architecture — Wikipédia FR',desc:'Histoire de l\'architecture mondiale',url:'https://fr.wikipedia.org/wiki/Architecture'},
+   toeic:TOEIC_LINKS[17]},
   // Jour 19
   {learn:{name:'Evidently AI — Data Drift guide',desc:'Monitorer la qualité des données en production.',url:'https://www.evidentlyai.com/blog/ml-monitoring-data-drift-detection'},
    wiki:{name:'Cybersecurity',desc:'Sécurité informatique — concepts clés',url:'https://en.wikipedia.org/wiki/Computer_security'},
-   culture:{name:'Economics — Wikipedia EN',desc:'Introduction à l\'économie mondiale',url:'https://en.wikipedia.org/wiki/Economics'}},
+   culture:{name:'Économie — Wikipédia FR',desc:'Introduction à l\'économie mondiale',url:'https://fr.wikipedia.org/wiki/Économie'},
+   toeic:TOEIC_LINKS[18]},
   // Jour 20
   {learn:{name:'Kaggle — Intro to ML (module 1)',desc:'Ton premier modèle de prédiction.',url:'https://www.kaggle.com/learn/intro-to-machine-learning'},
    wiki:{name:'Encryption',desc:'Comment fonctionne le chiffrement',url:'https://en.wikipedia.org/wiki/Encryption'},
-   culture:{name:'Sociology — Wikipedia EN',desc:'Comment les sociétés humaines fonctionnent',url:'https://en.wikipedia.org/wiki/Sociology'}},
+   culture:{name:'Sociologie — Wikipédia FR',desc:'Comment les sociétés humaines fonctionnent',url:'https://fr.wikipedia.org/wiki/Sociologie'},
+   toeic:TOEIC_LINKS[19]},
   // Jour 21
   {learn:{name:'Attention Is All You Need — abstract',desc:'Lis uniquement l\'abstract + la figure 1 du paper.',url:'https://arxiv.org/abs/1706.03762'},
    wiki:{name:'API (application programming interface)',desc:'Les APIs qui connectent tous les services',url:'https://en.wikipedia.org/wiki/API'},
-   culture:{name:'Nuclear power — Wikipedia EN',desc:'L\'énergie nucléaire, avantages et risques',url:'https://en.wikipedia.org/wiki/Nuclear_power'}},
+   culture:{name:'Énergie nucléaire — Wikipédia FR',desc:'Avantages, risques et enjeux du nucléaire',url:'https://fr.wikipedia.org/wiki/Énergie_nucléaire'},
+   toeic:TOEIC_LINKS[20]},
   // Jour 22
   {learn:{name:'HF Blog — LoRA fine-tuning expliqué',desc:'Comment fine-tuner un LLM à moindre coût.',url:'https://huggingface.co/blog/lora'},
    wiki:{name:'Computer network',desc:'Comment les réseaux informatiques fonctionnent',url:'https://en.wikipedia.org/wiki/Computer_network'},
-   culture:{name:'Linguistics — Wikipedia EN',desc:'La science du langage humain',url:'https://en.wikipedia.org/wiki/Linguistics'}},
+   culture:{name:'Linguistique — Wikipédia FR',desc:'La science du langage humain',url:'https://fr.wikipedia.org/wiki/Linguistique'},
+   toeic:TOEIC_LINKS[21]},
   // Jour 23
   {learn:{name:'Full Stack DL — Lecture 1',desc:'De l\'idée au déploiement — vue d\'ensemble.',url:'https://fullstackdeeplearning.com/course/2022/lecture-1-course-vision-and-when-to-use-ml/'},
    wiki:{name:'Operating system',desc:'Linux, Windows, macOS — comment ça marche',url:'https://en.wikipedia.org/wiki/Operating_system'},
-   culture:{name:'Nutrition — Wikipedia EN',desc:'Comment l\'alimentation affecte le corps',url:'https://en.wikipedia.org/wiki/Nutrition'}},
+   culture:{name:'Nutrition — Wikipédia FR',desc:'Comment l\'alimentation affecte le corps',url:'https://fr.wikipedia.org/wiki/Nutrition'},
+   toeic:TOEIC_LINKS[22]},
   // Jour 24
   {learn:{name:'Python DS Handbook — NumPy',desc:'Chapitre NumPy complet, gratuit en ligne.',url:'https://jakevdp.github.io/PythonDataScienceHandbook/02.00-introduction-to-numpy.html'},
    wiki:{name:'Docker (software)',desc:'Conteneurisation — comment ça marche',url:'https://en.wikipedia.org/wiki/Docker_(software)'},
-   culture:{name:'Ancient Rome — Wikipedia EN',desc:'Civilisation romaine, de la République à l\'Empire',url:'https://en.wikipedia.org/wiki/Ancient_Rome'}},
+   culture:{name:'Rome antique — Wikipédia FR',desc:'Civilisation romaine, de la République à l\'Empire',url:'https://fr.wikipedia.org/wiki/Rome_antique'},
+   toeic:TOEIC_LINKS[23]},
   // Jour 25
   {learn:{name:'HF Agents Course — Unit 1',desc:'Introduction aux agents IA autonomes.',url:'https://huggingface.co/learn/agents-course/unit1/introduction'},
    wiki:{name:'Kubernetes',desc:'Orchestration de conteneurs en production',url:'https://en.wikipedia.org/wiki/Kubernetes'},
-   culture:{name:'Cognitive science — Wikipedia EN',desc:'Comment fonctionne le cerveau humain',url:'https://en.wikipedia.org/wiki/Cognitive_science'}},
+   culture:{name:'Sciences cognitives — Wikipédia FR',desc:'Comment fonctionne le cerveau humain',url:'https://fr.wikipedia.org/wiki/Sciences_cognitives'},
+   toeic:TOEIC_LINKS[24]},
   // Jour 26
   {learn:{name:'Roadmap.sh — AI Engineer',desc:'Lis la roadmap complète et note ce que tu ne connais pas.',url:'https://roadmap.sh/ai-data-scientist'},
    wiki:{name:'Microprocessor',desc:'Le cœur de chaque ordinateur',url:'https://en.wikipedia.org/wiki/Microprocessor'},
-   culture:{name:'Buddhism — Wikipedia EN',desc:'Histoire et philosophie du bouddhisme',url:'https://en.wikipedia.org/wiki/Buddhism'}},
+   culture:{name:'Bouddhisme — Wikipédia FR',desc:'Histoire et philosophie du bouddhisme',url:'https://fr.wikipedia.org/wiki/Bouddhisme'},
+   toeic:TOEIC_LINKS[25]},
   // Jour 27
   {learn:{name:'CS50 AI — Search algorithms',desc:'Lecture 0 : comment une IA "cherche" une solution.',url:'https://cs50.harvard.edu/ai/2024/weeks/0/'},
    wiki:{name:'Quantum computing',desc:'L\'informatique quantique et son futur',url:'https://en.wikipedia.org/wiki/Quantum_computing'},
-   culture:{name:'World War II — Wikipedia EN',desc:'La Seconde Guerre mondiale en détail',url:'https://en.wikipedia.org/wiki/World_War_II'}},
+   culture:{name:'Seconde Guerre mondiale — Wikipédia FR',desc:'Le conflit le plus meurtrier de l'Histoire',url:'https://fr.wikipedia.org/wiki/Seconde_Guerre_mondiale'},
+   toeic:TOEIC_LINKS[26]},
   // Jour 28
   {learn:{name:'CS50 AI — Knowledge & Logic',desc:'Lecture 1 : représentation des connaissances.',url:'https://cs50.harvard.edu/ai/2024/weeks/1/'},
    wiki:{name:'5G',desc:'La 5G, comment ça marche vraiment',url:'https://en.wikipedia.org/wiki/5G'},
-   culture:{name:'Philosophy — Wikipedia EN',desc:'Introduction à la philosophie occidentale',url:'https://en.wikipedia.org/wiki/Philosophy'}},
+   culture:{name:'Philosophie — Wikipédia FR',desc:'Introduction à la philosophie occidentale',url:'https://fr.wikipedia.org/wiki/Philosophie'},
+   toeic:TOEIC_LINKS[27]},
   // Jour 29
   {learn:{name:'Distill.pub — Feature Visualization',desc:'Comprendre ce que voit un réseau de neurones.',url:'https://distill.pub/2017/feature-visualization/'},
    wiki:{name:'Artificial general intelligence',desc:'L\'AGI — où en est-on vraiment ?',url:'https://en.wikipedia.org/wiki/Artificial_general_intelligence'},
-   culture:{name:'Astronomy — Wikipedia EN',desc:'L\'univers, les étoiles, les galaxies',url:'https://en.wikipedia.org/wiki/Astronomy'}},
+   culture:{name:'Astronomie — Wikipédia FR',desc:'L\'univers, les étoiles, les galaxies',url:'https://fr.wikipedia.org/wiki/Astronomie'},
+   toeic:TOEIC_LINKS[28]},
   // Jour 30
   {learn:{name:'MIT Tech Review — AI section',desc:'Lis un article de fond sur l\'IA cette semaine.',url:'https://www.technologyreview.com/topic/artificial-intelligence/'},
    wiki:{name:'Ethics of artificial intelligence',desc:'Les enjeux éthiques de l\'IA',url:'https://en.wikipedia.org/wiki/Ethics_of_artificial_intelligence'},
-   culture:{name:'Psychology of learning — Wikipedia EN',desc:'Comment le cerveau apprend et mémorise',url:'https://en.wikipedia.org/wiki/Learning'}},
+   culture:{name:'Apprentissage — Wikipédia FR',desc:'Comment le cerveau apprend et mémorise',url:'https://fr.wikipedia.org/wiki/Apprentissage'},
+   toeic:TOEIC_LINKS[29]},
   // Jour 31
   {learn:{name:'Bilan du mois — arXiv CS.AI',desc:'Lis les titres des papers IA du mois. Note ce qui t\'intéresse.',url:'https://arxiv.org/list/cs.AI/recent'},
    wiki:{name:'History of the Internet',desc:'Comment Internet a été inventé',url:'https://en.wikipedia.org/wiki/History_of_the_Internet'},
-   culture:{name:'Creativity — Wikipedia EN',desc:'La créativité humaine et ses mécanismes',url:'https://en.wikipedia.org/wiki/Creativity'}},
+   culture:{name:'Créativité — Wikipédia FR',desc:'La créativité humaine et ses mécanismes',url:'https://fr.wikipedia.org/wiki/Cr%C3%A9ativit%C3%A9'},
+   toeic:TOEIC_LINKS[30]},
 ];
+
+// ── Quiz TOEIC ────────────────────────────────────────────────────────────────
+const TOEIC_QUESTIONS=[
+  // Part 5 — Incomplete sentences (grammar/vocab)
+  {type:'Part 5 — Grammaire',q:'The project manager asked that all reports _____ submitted by Friday.',s:'',opts:['A. be','B. are','C. were','D. being'],ans:0,exp:'After "asked that", use the subjunctive: "be submitted" (base form). This is a formal construction common in business English.'},
+  {type:'Part 5 — Vocabulaire',q:'Choose the correct word: The company\'s new strategy proved _____ in reducing costs.',s:'',opts:['A. effect','B. effective','C. effectively','D. effectiveness'],ans:1,exp:'"Effective" is an adjective that modifies "strategy" (via "proved"). "Effectively" is an adverb, "effect" a noun, "effectiveness" a noun.'},
+  {type:'Part 5 — Grammaire',q:'Neither the director nor the managers _____ available for comment.',s:'',opts:['A. was','B. were','C. has been','D. is'],ans:1,exp:'With "neither...nor", the verb agrees with the closest subject ("managers" = plural), so "were".'},
+  {type:'Part 5 — Vocabulaire',q:'The new software _____ will significantly improve our workflow.',s:'',opts:['A. upgrade','B. upgraded','C. upgrading','D. to upgrade'],ans:0,exp:'"Upgrade" is used as a noun here (subject of the sentence). "The new software upgrade" = a noun phrase.'},
+  {type:'Part 5 — Grammaire',q:'_____ receiving the award, she thanked her entire team.',s:'',opts:['A. Upon','B. Since','C. During','D. While'],ans:0,exp:'"Upon + gerund" is a formal way to say "immediately after doing something". Very common in written business English.'},
+  {type:'Part 5 — Vocabulaire',q:'Please _____ your email address so we can send you the confirmation.',s:'',opts:['A. verify','B. approve','C. confirm','D. validate'],ans:2,exp:'To "confirm" your email = make sure it is correct by entering it again. "Verify" and "validate" are possible, but "confirm" is most natural here in TOEIC contexts.'},
+  {type:'Part 5 — Grammaire',q:'The report will be reviewed by the committee before it _____ to the board.',s:'',opts:['A. presents','B. is presented','C. will present','D. presented'],ans:1,exp:'Passive voice is needed because "it" (the report) receives the action. Use "is presented" (passive, present tense) after "before".'},
+  {type:'Part 5 — Vocabulaire',q:'The merger was _____ after months of negotiation between the two firms.',s:'',opts:['A. finalized','B. finished','C. completed','D. concluded'],ans:0,exp:'"Finalized" is the most common TOEIC word for formally completing a deal, contract, or agreement.'},
+  {type:'Part 6 — Cohérence',q:'We regret to inform you that your application _____ not meet our current requirements.',s:'Context: formal rejection email.',opts:['A. do','B. does','C. did','D. has'],ans:1,exp:'"Your application does not meet" — the subject "application" is singular, so use "does". Present simple for a general fact.'},
+  {type:'Part 5 — Vocabulaire',q:'The conference has been _____ to next month due to unforeseen circumstances.',s:'',opts:['A. delayed','B. postponed','C. cancelled','D. rescheduled'],ans:1,exp:'"Postponed to" a specific date = moved to a later date. "Delayed" often implies an unspecified wait. "Rescheduled" is also correct but "postponed" is more formal and more common in TOEIC.'},
+  {type:'Part 5 — Grammaire',q:'The manager suggested _____ the meeting until everyone could attend.',s:'',opts:['A. to delay','B. delay','C. delaying','D. delayed'],ans:2,exp:'After "suggest", use the gerund (-ing form): "suggest delaying". Not an infinitive.'},
+  {type:'Part 5 — Vocabulaire',q:'All employees are _____ to complete the mandatory training by December 31.',s:'',opts:['A. required','B. demanded','C. forced','D. obliged'],ans:0,exp:'"Required to" is the standard business English phrase for mandatory actions. "Obliged" is also correct but less common in formal HR communications.'},
+  {type:'Part 5 — Grammaire',q:'_____ the budget cuts, the team managed to deliver the project on time.',s:'',opts:['A. Despite','B. Although','C. However','D. Even'],ans:0,exp:'"Despite" + noun phrase = "even though". "Although" is followed by a full clause (subject + verb), not just a noun phrase like "the budget cuts".'},
+  {type:'Part 5 — Vocabulaire',q:'The new policy will take _____ at the beginning of next quarter.',s:'',opts:['A. place','B. effect','C. action','D. part'],ans:1,exp:'"Take effect" = to start being applied or enforced. Very common in business/legal English on the TOEIC.'},
+  {type:'Part 5 — Grammaire',q:'The client, _____ proposal was accepted last week, will visit our office tomorrow.',s:'',opts:['A. who','B. whose','C. which','D. that'],ans:1,exp:'"Whose" shows possession: the proposal belongs to the client. "Who" would be wrong because the next word is a noun ("proposal"), not a verb.'},
+  {type:'Part 5 — Vocabulaire',q:'We are pleased to _____ that our new product line has exceeded sales expectations.',s:'',opts:['A. announce','B. advise','C. declare','D. state'],ans:0,exp:'"Announce" is the natural choice for sharing good news in a business context. "Advise" means to recommend/warn, "declare" is more formal/legal, "state" is too neutral.'},
+  {type:'Part 5 — Grammaire',q:'Had the team prepared better, they _____ the presentation more successfully.',s:'',opts:['A. would deliver','B. will have delivered','C. would have delivered','D. had delivered'],ans:2,exp:'Third conditional: "Had + past participle... would have + past participle". Used for unreal past situations.'},
+  {type:'Part 5 — Vocabulaire',q:'The sales figures for Q3 were _____ by 15% compared to the previous year.',s:'',opts:['A. grown','B. increased','C. raised','D. risen'],ans:3,exp:'"Rose" (past of rise) is intransitive — it doesn\'t need an object. "Increased by" is also correct. "Raised" is transitive (someone raised something). For TOEIC: "figures rose/increased by X%".'},
+  {type:'Part 5 — Grammaire',q:'The invoice should be _____ within 30 days of receipt.',s:'',opts:['A. pay','B. paid','C. paying','D. to pay'],ans:1,exp:'Passive construction: "should be + past participle". "Paid" is the past participle of "pay".'},
+  {type:'Part 5 — Vocabulaire',q:'The CEO emphasized the importance of _____ customer relationships.',s:'',opts:['A. keeping','B. maintaining','C. preserving','D. retaining'],ans:1,exp:'"Maintaining relationships" is the standard business expression. "Retaining customers" is also common but the object here is "relationships", not "customers".'},
+];
+
+let quizState={idx:0,score:0,answered:false,shuffled:[]};
+
+function shuffleArray(arr){return [...arr].sort(()=>Math.random()-.5);}
+
+function initQuiz(){
+  const today=new Date();
+  const seed=(today.getFullYear()*10000+today.getMonth()*100+today.getDate());
+  // Sélectionner 5 questions basées sur la date pour varier chaque jour
+  const start=(seed%16);
+  quizState.shuffled=[];
+  for(let i=0;i<5;i++) quizState.shuffled.push(TOEIC_QUESTIONS[(start+i)%TOEIC_QUESTIONS.length]);
+  quizState.idx=0;quizState.score=0;quizState.answered=false;
+  renderQuiz();
+}
+
+function renderQuiz(){
+  const container=document.getElementById('toeic-quiz');
+  if(!container)return;
+  const q=quizState.shuffled[quizState.idx];
+  if(!q){renderQuizScore();return;}
+  const letters=['A','B','C','D'];
+  container.innerHTML=`
+    <div class="quiz-card">
+      <div class="quiz-header">
+        <span class="quiz-title">Question ${quizState.idx+1} / ${quizState.shuffled.length}</span>
+        <span class="quiz-type">${q.type}</span>
+      </div>
+      <div class="quiz-body">
+        <div class="quiz-question">${q.q}</div>
+        ${q.s?`<div class="quiz-sentence">${q.s}</div>`:''}
+        <div class="quiz-options" id="quiz-opts">
+          ${q.opts.map((opt,i)=>`
+            <div class="quiz-opt" data-idx="${i}" onclick="selectOpt(${i})">
+              <span class="quiz-opt-letter">${letters[i]}</span>
+              <span>${opt.replace(/^[A-D]\.\s*/,'')}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz-fb"></div>
+      <div class="quiz-nav">
+        <span class="quiz-counter">Score : ${quizState.score} / ${quizState.shuffled.length}</span>
+        <button class="quiz-next" id="quiz-next-btn" onclick="nextQuestion()">Question suivante →</button>
+      </div>
+    </div>`;
+}
+
+function selectOpt(idx){
+  if(quizState.answered)return;
+  quizState.answered=true;
+  const q=quizState.shuffled[quizState.idx];
+  const opts=document.querySelectorAll('.quiz-opt');
+  const fb=document.getElementById('quiz-fb');
+  const nextBtn=document.getElementById('quiz-next-btn');
+  opts.forEach((el,i)=>{
+    el.classList.add('disabled');
+    if(i===q.ans)el.classList.add('correct');
+    else if(i===idx&&idx!==q.ans)el.classList.add('wrong');
+  });
+  const correct=(idx===q.ans);
+  if(correct)quizState.score++;
+  fb.className='quiz-feedback show '+(correct?'ok':'ko');
+  fb.innerHTML=(correct?'✅ Correct ! ':'❌ Pas tout à fait — ')+q.exp;
+  nextBtn.className='quiz-next show';
+  if(quizState.idx===quizState.shuffled.length-1)nextBtn.textContent='Voir le score →';
+}
+
+function nextQuestion(){
+  quizState.idx++;quizState.answered=false;
+  if(quizState.idx>=quizState.shuffled.length){renderQuizScore();return;}
+  renderQuiz();
+}
+
+function renderQuizScore(){
+  const container=document.getElementById('toeic-quiz');
+  const pct=Math.round(quizState.score/quizState.shuffled.length*100);
+  const msg=pct>=80?'Excellent ! 🎯':pct>=60?'Bien ! Continue comme ça 💪':'À retravailler 📚';
+  container.innerHTML=`
+    <div class="quiz-card">
+      <div class="quiz-header"><span class="quiz-title">Résultat du jour</span></div>
+      <div class="quiz-score">
+        <span class="quiz-score-num">${quizState.score} / ${quizState.shuffled.length}</span>
+        ${msg}<br><span style="font-size:12px;color:var(--fg2);margin-top:6px;display:block">Les questions changent chaque jour</span>
+        <button class="quiz-restart" onclick="initQuiz()">Recommencer</button>
+      </div>
+    </div>`;
+}
 
 function renderTodayProgram(){
   const container=document.getElementById('today-program');
@@ -579,9 +807,10 @@ function renderTodayProgram(){
   const monthNames=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
   const dateStr=d.getDate()+' '+monthNames[d.getMonth()]+' '+d.getFullYear();
   const items=[
-    {cat:'📚 Apprendre',icon:'🧠',...prog.learn},
+    {cat:'📚 Apprendre IA',icon:'🧠',...prog.learn},
     {cat:'🌍 Wikipedia EN',icon:'📖',...prog.wiki},
     {cat:'🌐 Culture générale',icon:'✨',...prog.culture},
+    {cat:'🇬🇧 Anglais TOEIC',icon:'📝',...prog.toeic},
   ];
   container.innerHTML=`
     <div class="today-card">
@@ -639,6 +868,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='anglais'&&!document.getElementById('toeic-quiz').innerHTML){initQuiz();}
   });
 });
 document.getElementById('prev-month').addEventListener('click',()=>{currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--;}renderAll();});
