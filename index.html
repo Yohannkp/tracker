@@ -179,6 +179,35 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
 .quiz-restart{margin-top:10px;padding:8px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
 .quiz-fr{margin-top:8px;padding:8px 10px;background:var(--surface2);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;font-size:12px;line-height:1.5;color:var(--fg)}
 .quiz-fr-label{font-weight:600;color:var(--gold);margin-right:4px}
+/* Shadowing module */
+.shadow-module{display:flex;flex-direction:column;gap:12px}
+.shadow-episodes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.shadow-ep-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:border-color .15s;display:flex;flex-direction:column;gap:4px}
+.shadow-ep-card:hover{border-color:var(--accent)}
+.shadow-ep-card.done{border-color:var(--accent);background:var(--accent-lt)}
+.shadow-ep-label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg2)}
+.shadow-ep-name{font-size:13px;font-weight:600;color:var(--fg);line-height:1.3}
+.shadow-ep-meta{font-size:11px;color:var(--fg2);display:flex;align-items:center;gap:6px;margin-top:2px}
+.shadow-ep-done-badge{font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-lt);padding:1px 6px;border-radius:99px}
+.shadow-player{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.shadow-player-header{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.shadow-back{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--fg2);cursor:pointer}
+.shadow-back:hover{background:var(--border)}
+.shadow-ep-title{font-size:13px;font-weight:600;color:var(--fg)}
+.shadow-steps{display:flex;flex-direction:column;gap:0}
+.shadow-step{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.shadow-step:last-child{border-bottom:none}
+.shadow-step-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.shadow-step-body{flex:1;display:flex;flex-direction:column;gap:4px}
+.shadow-step-title{font-size:13px;font-weight:600;color:var(--fg);display:flex;align-items:center;gap:6px}
+.shadow-step-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:99px;background:var(--gold-lt);color:var(--gold)}
+.shadow-step-desc{font-size:12px;color:var(--fg2);line-height:1.5}
+.shadow-listen-btn{display:inline-block;margin-top:6px;padding:6px 14px;background:var(--accent);color:#fff;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;width:fit-content}
+.shadow-listen-btn:hover{opacity:.85}
+.shadow-done-wrap{padding:14px 16px;border-top:1px solid var(--border);background:var(--surface2);display:flex;justify-content:center}
+.shadow-done-btn{padding:8px 24px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.shadow-done-btn:hover{opacity:.85}
+.shadow-tip{font-size:12px;color:var(--fg2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;line-height:1.5}
 @media(max-width:520px){.kpi-row{grid-template-columns:1fr 1fr}.review-grid{grid-template-columns:1fr}.mood-grid{grid-template-columns:1fr}}
 @media(max-width:360px){.kpi-row{grid-template-columns:1fr}}
 </style>
@@ -239,6 +268,54 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
     <div class="tab-pane" id="tab-anglais">
       <p class="section-title">TOEIC — Entraînement quotidien</p>
       <div id="toeic-quiz"></div>
+      <p class="section-title" style="margin-top:24px">Shadowing — Entraînement listening</p>
+      <div class="shadow-module" id="shadow-module">
+        <div class="shadow-episodes" id="shadow-episodes"></div>
+        <div class="shadow-player" id="shadow-player" style="display:none">
+          <div class="shadow-player-header">
+            <button class="shadow-back" onclick="shadowBack()">← Épisodes</button>
+            <span class="shadow-ep-title" id="shadow-ep-title"></span>
+          </div>
+          <div class="shadow-steps">
+            <div class="shadow-step" id="sstep-0">
+              <div class="shadow-step-num">1</div>
+              <div class="shadow-step-body">
+                <div class="shadow-step-title">Écoute active <span class="shadow-step-badge">×2</span></div>
+                <div class="shadow-step-desc">Écoute l'épisode sans lire. Note les mots que tu ne comprends pas. Écoute une 2ᵉ fois en te concentrant sur le rythme et l'intonation.</div>
+                <a class="shadow-listen-btn" id="shadow-link-0" href="#" target="_blank" rel="noopener">🎧 Ouvrir l'épisode</a>
+              </div>
+            </div>
+            <div class="shadow-step" id="sstep-1">
+              <div class="shadow-step-num">2</div>
+              <div class="shadow-step-body">
+                <div class="shadow-step-title">Lecture du transcript</div>
+                <div class="shadow-step-desc">Lis le transcript phrase par phrase. Identifie les mots inconnus, cherche leur sens. Ne passe pas à l'étape 3 sans avoir tout compris.</div>
+                <a class="shadow-listen-btn" id="shadow-link-1" href="#" target="_blank" rel="noopener">📄 Ouvrir le transcript</a>
+              </div>
+            </div>
+            <div class="shadow-step" id="sstep-2">
+              <div class="shadow-step-num">3</div>
+              <div class="shadow-step-body">
+                <div class="shadow-step-title">Shadowing <span class="shadow-step-badge">🔑 Clé</span></div>
+                <div class="shadow-step-desc">Relis le transcript en même temps que l'audio. Répète chaque phrase <strong>0,5 seconde après</strong> le locuteur — même rythme, même intonation. Enregistre-toi si possible.</div>
+                <a class="shadow-listen-btn" id="shadow-link-2" href="#" target="_blank" rel="noopener">🎧 Ouvrir l'épisode</a>
+              </div>
+            </div>
+            <div class="shadow-step" id="sstep-3">
+              <div class="shadow-step-num">4</div>
+              <div class="shadow-step-body">
+                <div class="shadow-step-title">Sans transcript</div>
+                <div class="shadow-step-desc">Dernière écoute sans lire. Tu dois tout comprendre. Si ce n'est pas le cas, reprends l'étape 2. C'est le signe que les mots ne sont pas encore ancrés.</div>
+                <a class="shadow-listen-btn" id="shadow-link-3" href="#" target="_blank" rel="noopener">🎧 Écoute finale</a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-done-wrap">
+            <button class="shadow-done-btn" onclick="shadowDone()">✅ Séance terminée</button>
+          </div>
+        </div>
+        <div class="shadow-tip">💡 <strong>10 min de shadowing sérieux > 1h d'écoute passive.</strong> Commence par des épisodes courts (BBC 6 min). L'inconfort au début est normal — c'est le cerveau qui recâble.</div>
+      </div>
       <p class="section-title" style="margin-top:20px">Ressources TOEIC</p>
       <div class="res-group">
         <div class="res-list">
@@ -903,6 +980,80 @@ function renderRessources(){
   });
 }
 renderRessources();
+
+// ── Shadowing Module ──────────────────────────────────────────────────────────
+const SHADOW_EPISODES=[
+  {id:'bbc_ai',label:'BBC 6 Minute English',name:'The Power of Artificial Intelligence',duration:'6 min',level:'B2',
+    audio:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-230706',
+    transcript:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-230706'},
+  {id:'bbc_work',label:'BBC 6 Minute English',name:'Is it wrong to lie at work?',duration:'6 min',level:'B2',
+    audio:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-230622',
+    transcript:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-230622'},
+  {id:'bbc_money',label:'BBC 6 Minute English',name:'Money and happiness',duration:'6 min',level:'B2',
+    audio:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-230504',
+    transcript:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-230504'},
+  {id:'bbc_remote',label:'BBC 6 Minute English',name:'Working from home — good or bad?',duration:'6 min',level:'B2',
+    audio:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-221201',
+    transcript:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-221201'},
+  {id:'bbc_climate',label:'BBC 6 Minute English',name:'Climate change and the economy',duration:'6 min',level:'B2',
+    audio:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-230413',
+    transcript:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-230413'},
+  {id:'bbc_social',label:'BBC 6 Minute English',name:'Social media and mental health',duration:'6 min',level:'B2',
+    audio:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-221103',
+    transcript:'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/ep-221103'},
+];
+
+function loadShadowState(){try{return JSON.parse(localStorage.getItem('shadow_done')||'[]')}catch{return[]}}
+function saveShadowState(arr){try{localStorage.setItem('shadow_done',JSON.stringify(arr))}catch{}}
+
+function renderShadowEpisodes(){
+  const done=loadShadowState();
+  const container=document.getElementById('shadow-episodes');
+  if(!container)return;
+  container.innerHTML='';
+  SHADOW_EPISODES.forEach(ep=>{
+    const isDone=done.includes(ep.id);
+    const card=document.createElement('div');
+    card.className='shadow-ep-card'+(isDone?' done':'');
+    card.innerHTML=`
+      <span class="shadow-ep-label">${ep.label}</span>
+      <span class="shadow-ep-name">${ep.name}</span>
+      <span class="shadow-ep-meta">${ep.duration} · ${ep.level}${isDone?'<span class="shadow-ep-done-badge">✓ Fait</span>':''}</span>`;
+    card.onclick=()=>openShadowPlayer(ep);
+    container.appendChild(card);
+  });
+}
+
+function openShadowPlayer(ep){
+  document.getElementById('shadow-episodes').style.display='none';
+  const player=document.getElementById('shadow-player');
+  player.style.display='block';
+  document.getElementById('shadow-ep-title').textContent=ep.name;
+  // Set all audio/transcript links
+  document.getElementById('shadow-link-0').href=ep.audio;
+  document.getElementById('shadow-link-1').href=ep.transcript;
+  document.getElementById('shadow-link-2').href=ep.audio;
+  document.getElementById('shadow-link-3').href=ep.audio;
+  player._currentEp=ep.id;
+}
+
+function shadowBack(){
+  document.getElementById('shadow-player').style.display='none';
+  document.getElementById('shadow-episodes').style.display='grid';
+}
+
+function shadowDone(){
+  const player=document.getElementById('shadow-player');
+  const id=player._currentEp;
+  if(!id)return;
+  const done=loadShadowState();
+  if(!done.includes(id))done.push(id);
+  saveShadowState(done);
+  shadowBack();
+  renderShadowEpisodes();
+}
+
+renderShadowEpisodes();
 
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
