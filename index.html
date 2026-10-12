@@ -177,6 +177,8 @@ main{flex:1;padding:16px 20px 40px;display:flex;flex-direction:column;gap:24px}
 .quiz-score{text-align:center;padding:20px;font-size:15px;font-weight:600}
 .quiz-score-num{font-size:32px;font-weight:700;color:var(--accent);display:block;margin-bottom:4px}
 .quiz-restart{margin-top:10px;padding:8px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.quiz-fr{margin-top:8px;padding:8px 10px;background:var(--surface2);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;font-size:12px;line-height:1.5;color:var(--fg)}
+.quiz-fr-label{font-weight:600;color:var(--gold);margin-right:4px}
 @media(max-width:520px){.kpi-row{grid-template-columns:1fr 1fr}.review-grid{grid-template-columns:1fr}.mood-grid{grid-template-columns:1fr}}
 @media(max-width:360px){.kpi-row{grid-template-columns:1fr}}
 </style>
@@ -688,27 +690,66 @@ const PROGRAMME=[
 
 // ── Quiz TOEIC ────────────────────────────────────────────────────────────────
 const TOEIC_QUESTIONS=[
-  // Part 5 — Incomplete sentences (grammar/vocab)
-  {type:'Part 5 — Grammaire',q:'The project manager asked that all reports _____ submitted by Friday.',s:'',opts:['A. be','B. are','C. were','D. being'],ans:0,exp:'After "asked that", use the subjunctive: "be submitted" (base form). This is a formal construction common in business English.'},
-  {type:'Part 5 — Vocabulaire',q:'Choose the correct word: The company\'s new strategy proved _____ in reducing costs.',s:'',opts:['A. effect','B. effective','C. effectively','D. effectiveness'],ans:1,exp:'"Effective" is an adjective that modifies "strategy" (via "proved"). "Effectively" is an adverb, "effect" a noun, "effectiveness" a noun.'},
-  {type:'Part 5 — Grammaire',q:'Neither the director nor the managers _____ available for comment.',s:'',opts:['A. was','B. were','C. has been','D. is'],ans:1,exp:'With "neither...nor", the verb agrees with the closest subject ("managers" = plural), so "were".'},
-  {type:'Part 5 — Vocabulaire',q:'The new software _____ will significantly improve our workflow.',s:'',opts:['A. upgrade','B. upgraded','C. upgrading','D. to upgrade'],ans:0,exp:'"Upgrade" is used as a noun here (subject of the sentence). "The new software upgrade" = a noun phrase.'},
-  {type:'Part 5 — Grammaire',q:'_____ receiving the award, she thanked her entire team.',s:'',opts:['A. Upon','B. Since','C. During','D. While'],ans:0,exp:'"Upon + gerund" is a formal way to say "immediately after doing something". Very common in written business English.'},
-  {type:'Part 5 — Vocabulaire',q:'Please _____ your email address so we can send you the confirmation.',s:'',opts:['A. verify','B. approve','C. confirm','D. validate'],ans:2,exp:'To "confirm" your email = make sure it is correct by entering it again. "Verify" and "validate" are possible, but "confirm" is most natural here in TOEIC contexts.'},
-  {type:'Part 5 — Grammaire',q:'The report will be reviewed by the committee before it _____ to the board.',s:'',opts:['A. presents','B. is presented','C. will present','D. presented'],ans:1,exp:'Passive voice is needed because "it" (the report) receives the action. Use "is presented" (passive, present tense) after "before".'},
-  {type:'Part 5 — Vocabulaire',q:'The merger was _____ after months of negotiation between the two firms.',s:'',opts:['A. finalized','B. finished','C. completed','D. concluded'],ans:0,exp:'"Finalized" is the most common TOEIC word for formally completing a deal, contract, or agreement.'},
-  {type:'Part 6 — Cohérence',q:'We regret to inform you that your application _____ not meet our current requirements.',s:'Context: formal rejection email.',opts:['A. do','B. does','C. did','D. has'],ans:1,exp:'"Your application does not meet" — the subject "application" is singular, so use "does". Present simple for a general fact.'},
-  {type:'Part 5 — Vocabulaire',q:'The conference has been _____ to next month due to unforeseen circumstances.',s:'',opts:['A. delayed','B. postponed','C. cancelled','D. rescheduled'],ans:1,exp:'"Postponed to" a specific date = moved to a later date. "Delayed" often implies an unspecified wait. "Rescheduled" is also correct but "postponed" is more formal and more common in TOEIC.'},
-  {type:'Part 5 — Grammaire',q:'The manager suggested _____ the meeting until everyone could attend.',s:'',opts:['A. to delay','B. delay','C. delaying','D. delayed'],ans:2,exp:'After "suggest", use the gerund (-ing form): "suggest delaying". Not an infinitive.'},
-  {type:'Part 5 — Vocabulaire',q:'All employees are _____ to complete the mandatory training by December 31.',s:'',opts:['A. required','B. demanded','C. forced','D. obliged'],ans:0,exp:'"Required to" is the standard business English phrase for mandatory actions. "Obliged" is also correct but less common in formal HR communications.'},
-  {type:'Part 5 — Grammaire',q:'_____ the budget cuts, the team managed to deliver the project on time.',s:'',opts:['A. Despite','B. Although','C. However','D. Even'],ans:0,exp:'"Despite" + noun phrase = "even though". "Although" is followed by a full clause (subject + verb), not just a noun phrase like "the budget cuts".'},
-  {type:'Part 5 — Vocabulaire',q:'The new policy will take _____ at the beginning of next quarter.',s:'',opts:['A. place','B. effect','C. action','D. part'],ans:1,exp:'"Take effect" = to start being applied or enforced. Very common in business/legal English on the TOEIC.'},
-  {type:'Part 5 — Grammaire',q:'The client, _____ proposal was accepted last week, will visit our office tomorrow.',s:'',opts:['A. who','B. whose','C. which','D. that'],ans:1,exp:'"Whose" shows possession: the proposal belongs to the client. "Who" would be wrong because the next word is a noun ("proposal"), not a verb.'},
-  {type:'Part 5 — Vocabulaire',q:'We are pleased to _____ that our new product line has exceeded sales expectations.',s:'',opts:['A. announce','B. advise','C. declare','D. state'],ans:0,exp:'"Announce" is the natural choice for sharing good news in a business context. "Advise" means to recommend/warn, "declare" is more formal/legal, "state" is too neutral.'},
-  {type:'Part 5 — Grammaire',q:'Had the team prepared better, they _____ the presentation more successfully.',s:'',opts:['A. would deliver','B. will have delivered','C. would have delivered','D. had delivered'],ans:2,exp:'Third conditional: "Had + past participle... would have + past participle". Used for unreal past situations.'},
-  {type:'Part 5 — Vocabulaire',q:'The sales figures for Q3 were _____ by 15% compared to the previous year.',s:'',opts:['A. grown','B. increased','C. raised','D. risen'],ans:3,exp:'"Rose" (past of rise) is intransitive — it doesn\'t need an object. "Increased by" is also correct. "Raised" is transitive (someone raised something). For TOEIC: "figures rose/increased by X%".'},
-  {type:'Part 5 — Grammaire',q:'The invoice should be _____ within 30 days of receipt.',s:'',opts:['A. pay','B. paid','C. paying','D. to pay'],ans:1,exp:'Passive construction: "should be + past participle". "Paid" is the past participle of "pay".'},
-  {type:'Part 5 — Vocabulaire',q:'The CEO emphasized the importance of _____ customer relationships.',s:'',opts:['A. keeping','B. maintaining','C. preserving','D. retaining'],ans:1,exp:'"Maintaining relationships" is the standard business expression. "Retaining customers" is also common but the object here is "relationships", not "customers".'},
+  {type:'Part 5 — Grammaire',q:'The project manager asked that all reports _____ submitted by Friday.',s:'',opts:['A. be','B. are','C. were','D. being'],ans:0,
+    exp:'After "asked that", use the subjunctive: "be submitted" (base form). This is a formal construction common in business English.',
+    fr:'« Le chef de projet a demandé que tous les rapports soient soumis avant vendredi. » — Après "asked that", on utilise le subjonctif anglais : la forme de base du verbe (be submitted), pas le présent ni le passé.'},
+  {type:'Part 5 — Vocabulaire',q:"The company's new strategy proved _____ in reducing costs.",s:'',opts:['A. effect','B. effective','C. effectively','D. effectiveness'],ans:1,
+    exp:'"Effective" is an adjective that modifies "strategy" (via "proved"). "Effectively" is an adverb, "effect" a noun, "effectiveness" a noun.',
+    fr:'« La nouvelle stratégie de l\'entreprise s\'est avérée efficace pour réduire les coûts. » — "Proved" est suivi d\'un adjectif attribut. "Effective" (adjectif) est correct ; "effectively" est un adverbe.'},
+  {type:'Part 5 — Grammaire',q:'Neither the director nor the managers _____ available for comment.',s:'',opts:['A. was','B. were','C. has been','D. is'],ans:1,
+    exp:'With "neither...nor", the verb agrees with the closest subject ("managers" = plural), so "were".',
+    fr:'« Ni le directeur ni les managers n\'étaient disponibles pour commenter. » — Avec "neither...nor", le verbe s\'accorde avec le sujet le plus proche. Ici "managers" est pluriel → "were".'},
+  {type:'Part 5 — Vocabulaire',q:'The new software _____ will significantly improve our workflow.',s:'',opts:['A. upgrade','B. upgraded','C. upgrading','D. to upgrade'],ans:0,
+    exp:'"Upgrade" is used as a noun here (subject of the sentence). "The new software upgrade" = a noun phrase.',
+    fr:'« La nouvelle mise à jour du logiciel améliorera considérablement notre flux de travail. » — "Upgrade" est ici un nom (pas un verbe). "The new software upgrade" = groupe nominal sujet.'},
+  {type:'Part 5 — Grammaire',q:'_____ receiving the award, she thanked her entire team.',s:'',opts:['A. Upon','B. Since','C. During','D. While'],ans:0,
+    exp:'"Upon + gerund" is a formal way to say "immediately after doing something". Very common in written business English.',
+    fr:'« Dès réception du prix, elle remercia toute son équipe. » — "Upon + verbe-ing" est une construction formelle qui signifie "immédiatement après". Très courant en anglais professionnel écrit.'},
+  {type:'Part 5 — Vocabulaire',q:'Please _____ your email address so we can send you the confirmation.',s:'',opts:['A. verify','B. approve','C. confirm','D. validate'],ans:2,
+    exp:'To "confirm" your email = make sure it is correct by entering it again. "Verify" and "validate" are possible, but "confirm" is most natural here in TOEIC contexts.',
+    fr:'« Veuillez confirmer votre adresse e-mail pour que nous puissions vous envoyer la confirmation. » — "Confirm" est le terme le plus naturel ici pour vérifier une saisie. "Verify" et "validate" sont possibles mais moins idiomatiques dans ce contexte.'},
+  {type:'Part 5 — Grammaire',q:'The report will be reviewed by the committee before it _____ to the board.',s:'',opts:['A. presents','B. is presented','C. will present','D. presented'],ans:1,
+    exp:'Passive voice is needed because "it" (the report) receives the action. Use "is presented" (passive, present tense) after "before".',
+    fr:'« Le rapport sera examiné par le comité avant d\'être présenté au conseil d\'administration. » — Le rapport subit l\'action (il est présenté), donc on utilise la voix passive : "is presented".'},
+  {type:'Part 5 — Vocabulaire',q:'The merger was _____ after months of negotiation between the two firms.',s:'',opts:['A. finalized','B. finished','C. completed','D. concluded'],ans:0,
+    exp:'"Finalized" is the most common TOEIC word for formally completing a deal, contract, or agreement.',
+    fr:'« La fusion a été finalisée après des mois de négociation entre les deux entreprises. » — "Finalize" est le terme business standard pour conclure formellement un accord ou un contrat.'},
+  {type:'Part 6 — Cohérence',q:'We regret to inform you that your application _____ not meet our current requirements.',s:'Context: formal rejection email.',opts:['A. do','B. does','C. did','D. has'],ans:1,
+    exp:'"Your application does not meet" — the subject "application" is singular, so use "does". Present simple for a general fact.',
+    fr:'« Nous regrettons de vous informer que votre candidature ne répond pas à nos exigences actuelles. » — "Application" est singulier → "does not meet". Présent simple pour un fait général.'},
+  {type:'Part 5 — Vocabulaire',q:'The conference has been _____ to next month due to unforeseen circumstances.',s:'',opts:['A. delayed','B. postponed','C. cancelled','D. rescheduled'],ans:1,
+    exp:'"Postponed to" a specific date = moved to a later date. "Delayed" often implies an unspecified wait. "Rescheduled" is also correct but "postponed" is more formal and more common in TOEIC.',
+    fr:'« La conférence a été reportée au mois prochain en raison de circonstances imprévues. » — "Postponed to" = reporté à une date précise. "Delayed" suggère un retard indéfini ; "rescheduled" est correct mais moins formel.'},
+  {type:'Part 5 — Grammaire',q:'The manager suggested _____ the meeting until everyone could attend.',s:'',opts:['A. to delay','B. delay','C. delaying','D. delayed'],ans:2,
+    exp:'After "suggest", use the gerund (-ing form): "suggest delaying". Not an infinitive.',
+    fr:'« Le manager a suggéré de reporter la réunion jusqu\'à ce que tout le monde puisse y assister. » — Après "suggest", on utilise le gérondif (-ing). Jamais l\'infinitif ("to delay" est incorrect ici).'},
+  {type:'Part 5 — Vocabulaire',q:'All employees are _____ to complete the mandatory training by December 31.',s:'',opts:['A. required','B. demanded','C. forced','D. obliged'],ans:0,
+    exp:'"Required to" is the standard business English phrase for mandatory actions. "Obliged" is also correct but less common in formal HR communications.',
+    fr:'« Tous les employés doivent suivre la formation obligatoire avant le 31 décembre. » — "Required to" est la formule RH standard en anglais business. "Obliged to" est correct mais moins courant dans les communications formelles.'},
+  {type:'Part 5 — Grammaire',q:'_____ the budget cuts, the team managed to deliver the project on time.',s:'',opts:['A. Despite','B. Although','C. However','D. Even'],ans:0,
+    exp:'"Despite" + noun phrase = "even though". "Although" is followed by a full clause (subject + verb), not just a noun phrase like "the budget cuts".',
+    fr:'« Malgré les réductions budgétaires, l\'équipe a réussi à livrer le projet dans les délais. » — "Despite" est suivi d\'un groupe nominal. "Although" est suivi d\'une proposition complète (sujet + verbe).'},
+  {type:'Part 5 — Vocabulaire',q:'The new policy will take _____ at the beginning of next quarter.',s:'',opts:['A. place','B. effect','C. action','D. part'],ans:1,
+    exp:'"Take effect" = to start being applied or enforced. Very common in business/legal English on the TOEIC.',
+    fr:'« La nouvelle politique entrera en vigueur au début du prochain trimestre. » — "Take effect" = entrer en vigueur. Expression très fréquente dans les textes juridiques et business du TOEIC.'},
+  {type:'Part 5 — Grammaire',q:'The client, _____ proposal was accepted last week, will visit our office tomorrow.',s:'',opts:['A. who','B. whose','C. which','D. that'],ans:1,
+    exp:'"Whose" shows possession: the proposal belongs to the client. "Who" would be wrong because the next word is a noun ("proposal"), not a verb.',
+    fr:'« Le client, dont la proposition a été acceptée la semaine dernière, visitera notre bureau demain. » — "Whose" exprime la possession (la proposition appartient au client). Devant un nom, on utilise "whose", pas "who".'},
+  {type:'Part 5 — Vocabulaire',q:'We are pleased to _____ that our new product line has exceeded sales expectations.',s:'',opts:['A. announce','B. advise','C. declare','D. state'],ans:0,
+    exp:'"Announce" is the natural choice for sharing good news in a business context. "Advise" means to recommend/warn, "declare" is more formal/legal, "state" is too neutral.',
+    fr:'« Nous avons le plaisir d\'annoncer que notre nouvelle gamme de produits a dépassé les prévisions de ventes. » — "Announce" est le verbe naturel pour partager une bonne nouvelle en contexte professionnel.'},
+  {type:'Part 5 — Grammaire',q:'Had the team prepared better, they _____ the presentation more successfully.',s:'',opts:['A. would deliver','B. will have delivered','C. would have delivered','D. had delivered'],ans:2,
+    exp:'Third conditional: "Had + past participle... would have + past participle". Used for unreal past situations.',
+    fr:'« Si l\'équipe s\'était mieux préparée, elle aurait réalisé la présentation avec plus de succès. » — Conditionnel passé (3ᵉ conditionnel) : "Had + participe passé... would have + participe passé". Situation irréelle dans le passé.'},
+  {type:'Part 5 — Vocabulaire',q:'The sales figures for Q3 were _____ by 15% compared to the previous year.',s:'',opts:['A. grown','B. increased','C. raised','D. risen'],ans:3,
+    exp:'"Rose" (past of rise) is intransitive — it doesn\'t need an object. "Increased by" is also correct. "Raised" is transitive (someone raised something). For TOEIC: "figures rose/increased by X%".',
+    fr:'« Les chiffres de ventes du T3 ont augmenté de 15 % par rapport à l\'année précédente. » — "Rise" est intransitif (aucun complément d\'objet). "Raise" est transitif (quelqu\'un lève quelque chose). Pour les statistiques : "figures rose/increased by X%".'},
+  {type:'Part 5 — Grammaire',q:'The invoice should be _____ within 30 days of receipt.',s:'',opts:['A. pay','B. paid','C. paying','D. to pay'],ans:1,
+    exp:'Passive construction: "should be + past participle". "Paid" is the past participle of "pay".',
+    fr:'« La facture doit être réglée dans les 30 jours suivant sa réception. » — Construction passive : "should be + participe passé". "Paid" est le participe passé de "pay".'},
+  {type:'Part 5 — Vocabulaire',q:'The CEO emphasized the importance of _____ customer relationships.',s:'',opts:['A. keeping','B. maintaining','C. preserving','D. retaining'],ans:1,
+    exp:'"Maintaining relationships" is the standard business expression. "Retaining customers" is also common but the object here is "relationships", not "customers".',
+    fr:'« Le PDG a insisté sur l\'importance d\'entretenir les relations avec les clients. » — "Maintaining relationships" est l\'expression business standard. "Retaining" s\'applique plutôt aux "customers" (clients), pas aux "relationships".'},
 ];
 
 let quizState={idx:0,score:0,answered:false,shuffled:[]};
@@ -772,7 +813,8 @@ function selectOpt(idx){
   const correct=(idx===q.ans);
   if(correct)quizState.score++;
   fb.className='quiz-feedback show '+(correct?'ok':'ko');
-  fb.innerHTML=(correct?'✅ Correct ! ':'❌ Pas tout à fait — ')+q.exp;
+  const frPart=(!correct&&q.fr)?`<div class="quiz-fr"><span class="quiz-fr-label">🇫🇷 En français :</span> ${q.fr}</div>`:'';
+  fb.innerHTML=(correct?'✅ Correct ! ':'❌ Pas tout à fait — ')+q.exp+frPart;
   nextBtn.className='quiz-next show';
   if(quizState.idx===quizState.shuffled.length-1)nextBtn.textContent='Voir le score →';
 }
